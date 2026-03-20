@@ -259,6 +259,27 @@ Ao criar ou modificar uma tela, referenciar sempre o form de origem:
 
 ---
 
+## Critérios de Migração de Comportamento WinForms
+
+Ao analisar um form legado, classifique cada comportamento em:
+
+- **PRESERVAR** — regra de negócio pura (validações, cálculos, permissões)
+- **ADAPTAR** — a intenção vale, mas a implementação muda para o contexto web
+- **DESCARTAR** — artefato da plataforma WinForms sem equivalente ou necessidade web
+
+Toda decisão de ADAPTAR ou DESCARTAR deve ser registrada na documentação
+do form (docs/NomeDoForm_documentacao.md) com justificativa explícita.
+Nunca descartar silenciosamente.
+```
+
+E **no prompt do frmPrincipal**, adicionar dentro da Fase 1:
+```
+- Para cada comportamento encontrado, classifique como PRESERVAR, ADAPTAR
+  ou DESCARTAR conforme os critérios do CLAUDE.md, e registre a justificativa
+  na documentação antes de escrever qualquer código.
+
+---
+
 ## Dúvidas Frequentes
 
 **Posso criar uma nova tabela no banco?**
