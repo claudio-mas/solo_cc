@@ -7,15 +7,16 @@ Dependências:
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from pydantic import BaseModel
-from jose import JWTError, jwt
+from jose import jwt
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from typing import Optional
 import os
+
+from app.dependencies import get_db, get_current_user  # noqa: F401
 
 router = APIRouter(prefix="/auth", tags=["Autenticação"])
 
@@ -27,7 +28,6 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 480  # 8 horas (equivalente a uma sessão de trabalho)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 # ---------------------------------------------------------------------------
@@ -187,52 +187,3 @@ async def login(payload: LoginRequest, db: Session = Depends(get_db)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erro interno: {str(e)}"
         )
-
-
-# ---------------------------------------------------------------------------
-# Dependency — obtém sessão do banco (implemente conforme seu database.py)
-# ---------------------------------------------------------------------------
-def get_db():
-    """
-    Substitua pela sua implementação de sessão SQLAlchemy.
-    Exemplo:
-        from app.database import SessionLocal
-        db = SessionLocal()
-        try:
-            yield db
-        finally:
-            db.close()
-    """
-    raise NotImplementedError("Implemente get_db() com sua SessionLocal do SQLAlchemy")
-
-
-# ---------------------------------------------------------------------------
-# Dependency — usuário autenticado atual (para uso nos demais endpoints)
-# ---------------------------------------------------------------------------
-async def get_current_user(
-    token: str = Depends(oauth2_scheme),
-    db: Session = Depends(get_db)
-):
-    """
-    Decodifica o JWT e retorna os dados do usuário logado.
-    Substitui o acesso às variáveis globais varUsu e varPerfil do sistema desktop.
-    Use como dependência nos endpoints que requerem autenticação:
-
-        @router.get("/alguma-rota")
-        async def rota(user=Depends(get_current_user)):
-            ...
-    """
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Não foi possível validar as credenciais",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        usuario: str = payload.get("sub")
-        perfil: str = payload.get("perfil")
-        if usuario is None:
-            raise credentials_exception
-        return {"usuario": usuario, "perfil": perfil}
-    except JWTError:
-        raise credentials_exception

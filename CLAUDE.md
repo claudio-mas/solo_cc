@@ -255,7 +255,6 @@ Ao criar ou modificar uma tela, referenciar sempre o form de origem:
 |---------------|-----------------|-------------------------------------|
 | `/login`      | `frmLogin`      | `docs/frmLogin_documentacao.md`     |
 | `/principal`  | `FrmPrincipal`  | `docs/FrmPrincipal_documentacao.md` |
-|               |                 |                                     |
 
 ---
 
