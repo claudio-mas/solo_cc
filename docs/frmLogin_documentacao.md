@@ -81,7 +81,9 @@ Tela de login exibida na inicialização do sistema. Permite que o usuário sele
 ### 4.4 Tecla Enter (`frmLogin_KeyDown`)
 - A tecla `Enter` é interceptada globalmente no form (`KeyPreview = True`).
 - Comportamento: `Enter` equivale a `Tab` (avança para o próximo campo).
-- Na web, esse comportamento é nativo em formulários HTML — não requer implementação especial.
+- Na web, esse comportamento **não é nativo** — `Enter` em um `<input>` HTML submete o formulário.
+  O campo `usuario` possui `onKeyDown` que intercepta `Enter` e chama `senhaRef.current?.focus()`.
+  O campo `senha` mantém o comportamento padrão (Enter = submit), o que é o esperado no último campo. (B15)
 
 ---
 
@@ -158,9 +160,9 @@ Tela de login exibida na inicialização do sistema. Permite que o usuário sele
 | B12  | `FrmPrincipal.lblUsuario.Text = "USUÁRIO: " + UCase(...)` | ✅ PRESERVAR | ✅ Implementado — router retorna `usuario` em maiúsculas; tela principal deve exibir "USUÁRIO: X" | A formatação "USUÁRIO: X" deve ser aplicada na tela `/principal` ao exibir o nome. |
 | B13  | `btnCancelar_Click` → `Application.Exit()` | 🔄 ADAPTAR | ✅ Implementado — `window.close()` com comentário `⚠️` no código | `window.close()` pode ser bloqueado por browsers quando a aba não foi aberta por script. Discutir comportamento esperado com o cliente antes do go-live. |
 | B14  | `Application.Exit()` no bloco `Catch` do `btnOk_Click` | 🔄 ADAPTAR | ✅ Implementado — router lança `HTTPException 500`; frontend exibe mensagem de erro | O original encerrava o app em erros inesperados. A web permite nova tentativa, o que é mais adequado para ambiente web. |
-| B15  | `frmLogin_KeyDown`: `Enter` → `SendKeys("{Tab}")` (avança campo) | ⚠️ 🔄 ADAPTAR | ⚠️ **Decisão silenciosa** — ver detalhes abaixo | |
+| B15  | `frmLogin_KeyDown`: `Enter` → `SendKeys("{Tab}")` (avança campo) | 🔄 ADAPTAR | ✅ Implementado — `onKeyDown` no campo `usuario` intercepta Enter e chama `senhaRef.current?.focus()`. Decisão registrada em 2026-03-21. | Cliente confirmou que Enter deve avançar para o campo senha, preservando o comportamento original. |
 | B16  | `Highlighter1` — borda vermelha em **qualquer campo com foco** | ⚠️ 🔄 ADAPTAR | ⚠️ **Decisão silenciosa** — ver detalhes abaixo | |
-| B17  | Bloco comentado: `DLookUp` / `FrmErrosCodIdClientes` | ⚠️ ❌ DESCARTAR | ⚠️ **Pendente confirmação do cliente** — ver detalhes abaixo | |
+| B17  | Bloco comentado: `DLookUp` / `FrmErrosCodIdClientes` | ❌ DESCARTAR | ✅ Descartado — validação de integridade considerada obsoleta pelo cliente. Decisão registrada em 2026-03-21. | Bloco estava comentado no próprio sistema original. Cliente confirmou que a inconsistência foi corrigida na base e o aviso não será reativado. |
 | B18  | `Button2` — botão invisível sem evento associado | ❌ DESCARTAR | ✅ Descartado — não renderizado no frontend | Sem função ativa no original. Mencionado na seção 2. |
 | B19  | `ControlBox = False`, `MaximizeBox = False`, `MinimizeBox = False` | ❌ DESCARTAR | ✅ Descartado — contexto browser tem seus próprios controles de janela | Não aplicável em SPA. |
 | B20  | `StartPosition = CenterScreen` | 🔄 ADAPTAR | ✅ Implementado — `flex min-h-screen items-center justify-center` no layout | Centralização equivalente. |
@@ -173,29 +175,26 @@ Tela de login exibida na inicialização do sistema. Permite que o usuário sele
 
 ### 8.2 Decisões silenciosas que requerem atenção
 
-#### ⚠️ B15 — Comportamento da tecla Enter
+#### B15 — Comportamento da tecla Enter
 
 **Original (VB.Net):**
 O form tem `KeyPreview = True` e intercepta a tecla `Enter` globalmente,
 enviando um `Tab` via `SendKeys`. Resultado: `Enter` **avança o foco** para o
 próximo campo sem submeter o form.
 
-**Decisão tomada (implícita):**
-A documentação na seção 4.4 afirma que "esse comportamento é nativo em
-formulários HTML". Isso é **impreciso**: em um formulário HTML com botão
-`type="submit"`, pressionar `Enter` em qualquer campo de texto **submete o
-formulário**, não avança o foco.
+**Decisão registrada em 2026-03-21:** 🔄 ADAPTAR
 
-**Impacto prático:**
-- No campo `usuario`: Enter submete o form (em vez de avançar para `senha`).
-- No campo `senha`: Enter também submete (coincide com a ação do `btnOk`).
+Cliente confirmou que Enter deve avançar o foco do campo `usuario` para o
+campo `senha`, preservando o comportamento original. O campo `senha` mantém
+o comportamento padrão HTML (Enter = submit), pois coincide com a ação
+esperada ao finalizar o preenchimento.
 
-**Classificação correta:** 🔄 ADAPTAR (aceito, comportamento mais idiomático na web)
+**Implementação:**
+Campo `usuario` recebe `onKeyDown` que intercepta `Enter`, chama
+`e.preventDefault()` e executa `senhaRef.current?.focus()`.
+Campo `senha` não é alterado — Enter submete o form normalmente.
 
-**Ação recomendada:** Confirmar com o cliente se o comportamento atual (Enter =
-submeter) é aceitável. Caso o cliente prefira o comportamento original (Enter =
-Tab no campo `usuario`), adicionar `onKeyDown` no campo `usuario` para chamar
-`senhaRef.current?.focus()` ao detectar `Enter`.
+**Arquivo alterado:** `frontend/src/pages/Login/index.tsx`
 
 ---
 
@@ -221,7 +220,7 @@ deve replicar o destaque vermelho do original. Registrar decisão aqui.
 
 ---
 
-#### ⚠️ B17 — Bloco comentado: DLookUp / FrmErrosCodIdClientes
+#### B17 — Bloco comentado: DLookUp / FrmErrosCodIdClientes
 
 **Original (VB.Net) — linhas 40–46 do `frmLogin.vb`:**
 ```vb
@@ -233,31 +232,24 @@ FrmPrincipal.Show()
 'End If
 ```
 
-O bloco sugere que, em algum momento, após o login era exibido um aviso sobre
-**inconsistências de dados** (clientes com `CodCliente` e `IdCliente` trocados
-entre si) antes de abrir a tela principal. Esse comportamento foi **comentado
-no próprio sistema original**, indicando uma decisão anterior de desativação.
+O bloco verificava inconsistências de dados (clientes com `CodCliente` e
+`IdCliente` trocados entre si) antes de abrir a tela principal. Estava
+**comentado no próprio sistema original** antes da migração.
 
-**Classificação correta:** ❌ DESCARTAR (pendente confirmação do cliente)
+**Decisão registrada em 2026-03-21:** ❌ DESCARTAR
 
-**Ação recomendada:** Confirmar com o cliente/responsável pelo sistema:
-1. A inconsistência de dados foi corrigida na base? (tornando o aviso obsoleto)
-2. Ou o aviso deve ser reativado na migração web?
-
-Caso a resposta seja (2), será necessário implementar um endpoint de validação
-de integridade e um modal/página equivalente ao `FrmErrosCodIdClientes` antes
-de concluir a migração do login.
-
-> **Decisão pendente** — aguardando confirmação do cliente.
+Cliente confirmou que a inconsistência de dados foi corrigida na base.
+O aviso é obsoleto e **não será reativado** na migração web.
+Nenhuma ação de código necessária. `FrmErrosCodIdClientes` não será migrado.
 
 ---
 
 ### 8.3 Resumo de pendências
 
-| Ref  | Descrição | Responsável |
-|------|-----------|-------------|
-| B13  | Confirmar comportamento de "Cancelar" (`window.close()`) com o cliente | Cliente / PO |
-| B15  | Confirmar se Enter = Tab no campo usuário é requisito | Cliente / PO |
-| B16  | Definir estilo de foco no design system (vermelho vs. primária) | Designer / PO |
-| B17  | Confirmar se validação `DLookUp` / `FrmErrosCodIdClientes` deve ser reativada | Cliente / PO |
-| —    | Script de migração de senhas para bcrypt necessário antes do go-live | Dev Backend |
+| Ref  | Descrição | Responsável | Status |
+|------|-----------|-------------|--------|
+| B13  | Confirmar comportamento de "Cancelar" (`window.close()`) com o cliente | Cliente / PO | Aberto |
+| B15  | Enter = Tab no campo usuario | Cliente / PO | ✅ Resolvido 2026-03-21 — ADAPTAR implementado |
+| B16  | Definir estilo de foco no design system (vermelho vs. primária) | Designer / PO | Aberto |
+| B17  | Validação `DLookUp` / `FrmErrosCodIdClientes` | Cliente / PO | ✅ Resolvido 2026-03-21 — DESCARTAR confirmado |
+| —    | Script de migração de senhas para bcrypt necessário antes do go-live | Dev Backend | Aberto |

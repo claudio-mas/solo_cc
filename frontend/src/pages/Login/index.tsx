@@ -138,6 +138,13 @@ export default function Login() {
                 disabled={isLoading}
                 aria-invalid={!!errors.usuario}
                 {...register("usuario")}
+                // B15 — Enter avança foco para senha (equivalente ao SendKeys("{Tab}") do frmLogin_KeyDown)
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    senhaRef.current?.focus();
+                  }
+                }}
                 className={[
                   "rounded border px-2 py-1.5 text-sm outline-none transition-colors",
                   errors.usuario
