@@ -69,7 +69,7 @@ export default function Principal() {
   // -------------------------------------------------------------------------
   useEffect(() => {
     if (clientes.length > 0 && selectedCliente === null) {
-      setSelectedCliente(clientes[0]);
+      setSelectedCliente(clientes[0] ?? null);
     }
   }, [clientes, selectedCliente]);
 
