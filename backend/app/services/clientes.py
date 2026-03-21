@@ -14,11 +14,7 @@ def listar_clientes(db: Session) -> list[dict]:
     no FrmPrincipal_Load.
     """
     result = db.execute(
-        text(
-            "SELECT Id, Código, Cliente "
-            "FROM Clientes "
-            "ORDER BY Cliente ASC"
-        )
+        text("SELECT Id, Código, Cliente FROM Clientes ORDER BY Cliente ASC")
     ).fetchall()
 
     return [

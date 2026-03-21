@@ -6,7 +6,7 @@ Equivalente a: FrmPrincipal.vb (Solo Consultoria de Imóveis)
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.dependencies import get_db, get_current_user
+from app.dependencies import get_current_user, get_db
 from app.schemas.clientes import ClientesResponse
 from app.services.clientes import listar_clientes
 

@@ -9,13 +9,11 @@ Cobertura obrigatória (CLAUDE.md):
 
 from unittest.mock import MagicMock
 
-import pytest
 from fastapi.testclient import TestClient
 from jose import jwt
 
-from app.dependencies import get_db, get_current_user
+from app.dependencies import get_db
 from app.main import app
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -54,8 +52,10 @@ def mock_db_with_clientes(rows: list):
 
 def override_get_db(rows: list):
     """Override da dependência get_db com dados mockados."""
+
     def _override():
         yield mock_db_with_clientes(rows)
+
     return _override
 
 
@@ -63,8 +63,10 @@ def override_get_db(rows: list):
 # Dados de teste
 # ---------------------------------------------------------------------------
 
+
 class FakeRow:
     """Simula uma row SQLAlchemy com atributos nomeados."""
+
     def __init__(self, Id, Código, Cliente):
         self.Id = Id
         self.Código = Código
@@ -91,14 +93,10 @@ class TestListarClientes:
         Caminho feliz: JWT válido → 200 com lista de clientes.
         RN09 — lista retornada ordenada por nome (garantido pela query).
         """
-        app.dependency_overrides[get_db] = override_get_db(
-            SAMPLE_CLIENTES
-        )
+        app.dependency_overrides[get_db] = override_get_db(SAMPLE_CLIENTES)
         client = TestClient(app)
 
-        response = client.get(
-            "/clientes/", headers=auth_header()
-        )
+        response = client.get("/clientes/", headers=auth_header())
 
         assert response.status_code == 200
         data = response.json()
@@ -133,9 +131,7 @@ class TestListarClientes:
         app.dependency_overrides[get_db] = override_get_db([])
         client = TestClient(app)
 
-        response = client.get(
-            "/clientes/", headers=auth_header()
-        )
+        response = client.get("/clientes/", headers=auth_header())
 
         assert response.status_code == 200
         data = response.json()
