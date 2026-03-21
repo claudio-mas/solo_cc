@@ -15,6 +15,24 @@ DATABASE_URL = os.getenv(
     "mssql+pyodbc://user:pass@host/db?driver=ODBC+Driver+17+for+SQL+Server",
 )
 
-engine = create_engine(DATABASE_URL)
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+def _get_engine():
+    return create_engine(DATABASE_URL)
+
+
+engine = None
+SessionLocal = None
+
+
+def init_db():
+    """Inicializa engine e SessionLocal. Chamado no startup da aplicação."""
+    global engine, SessionLocal  # noqa: PLW0603
+    engine = _get_engine()
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
+def get_session_local():
+    """Retorna SessionLocal, inicializando se necessário."""
+    if SessionLocal is None:
+        init_db()
+    return SessionLocal

@@ -10,9 +10,8 @@ import os
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-from sqlalchemy.orm import Session
 
-from app.database import SessionLocal
+from app.database import get_session_local
 
 # ---------------------------------------------------------------------------
 # Configuração JWT (compartilhada com auth_router para criação de tokens)
@@ -31,7 +30,7 @@ def get_db():
     Fornece uma sessão SQLAlchemy para cada request.
     Fecha automaticamente ao final, mesmo em caso de exceção.
     """
-    db = SessionLocal()
+    db = get_session_local()()
     try:
         yield db
     finally:
