@@ -70,14 +70,17 @@ class UsuarioListItem(BaseModel):
 # ---------------------------------------------------------------------------
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """
-    Verifica senha com hash bcrypt.
+    Verifica senha — suporta bcrypt (pós-migração) e texto plano (legado).
 
     NOTA DE MIGRAÇÃO:
-    O sistema original compara senha em texto plano (Psw = varSenha).
-    Na migração, as senhas devem ser migradas para bcrypt.
-    Script de migração necessário antes do go-live.
+    O sistema original armazena senhas em texto plano (Psw = varSenha).
+    Senhas já migradas terão prefixo $2b$ (bcrypt). Após go-live, remover
+    o fallback de texto plano e garantir que todas as senhas estejam em bcrypt.
     """
-    return pwd_context.verify(plain_password, hashed_password)
+    if hashed_password.startswith("$2b$") or hashed_password.startswith("$2a$"):
+        return pwd_context.verify(plain_password, hashed_password)
+    # LEGADO: comparação direta para senhas ainda não migradas para bcrypt
+    return plain_password == hashed_password
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:

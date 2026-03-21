@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #1d4ed8; /* blue-700 — cor dos botões de ação */
+}
