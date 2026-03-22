@@ -209,28 +209,33 @@ export default function Principal() {
   }, [isLoading]);
 
   // -------------------------------------------------------------------------
-  // RN12/RN13 — Pesquisa por prefixo (nome case-insensitive, código case-sensitive)
-  // Replicar lógica EXATA do VB.Net (linha 146 do frmPrincipal.vb):
-  //   Nome: UCase(Left(cliente, len(search))) === UCase(search)
+  // RN12 — Filtra em memória por prefixo de nome (case-insensitive) ou código
+  // ADAPTAR: VB.Net apenas posicionava no primeiro match (RN13 original);
+  //          na web a lista é filtrada em tempo real sem round-trip ao backend.
+  //   Nome:   UCase(Left(cliente, len(search))) === UCase(search)
   //   Código: Left(codigo.toString(), len(search)) === search
   // -------------------------------------------------------------------------
+  const filteredClientes = useMemo(() => {
+    if (searchText === "") return clientes;
+    const upper = searchText.toUpperCase();
+    return clientes.filter(
+      (c) =>
+        c.cliente.toUpperCase().includes(upper) ||
+        c.codigo.toString().substring(0, searchText.length) === searchText,
+    );
+  }, [clientes, searchText]);
+
+  // Seleciona automaticamente o primeiro resultado filtrado ao digitar
+  useEffect(() => {
+    if (filteredClientes.length > 0) {
+      setSelectedCliente(filteredClientes[0] ?? null);
+    } else {
+      setSelectedCliente(null);
+    }
+  }, [filteredClientes]);
+
   function handleSearch(value: string) {
     setSearchText(value);
-    if (value === "") return;
-
-    const match = clientes.find(
-      (c) =>
-        c.cliente
-          .substring(0, value.length)
-          .toUpperCase() === value.toUpperCase() ||
-        c.codigo
-          .toString()
-          .substring(0, value.length) === value,
-    );
-
-    if (match) {
-      setSelectedCliente(match);
-    }
   }
 
   // -------------------------------------------------------------------------
@@ -505,7 +510,7 @@ export default function Principal() {
           <div className="overflow-hidden rounded-md border border-neutral-200 bg-white shadow-sm">
             <DataTable
               columns={columns}
-              data={clientes}
+              data={filteredClientes}
               onRowClick={handleRowClick}
               onRowDoubleClick={handleRowDoubleClick}
               selectedRowId={selectedCliente?.id ?? null}
@@ -517,12 +522,13 @@ export default function Principal() {
             {!isLoading && (
               <div className="flex items-center justify-between border-t border-neutral-100 bg-white px-4 py-2 text-xs text-neutral-500">
                 <span>
-                  {clientes.length}{" "}
-                  {clientes.length === 1 ? "registro" : "registros"}
+                  {filteredClientes.length}{" "}
+                  {filteredClientes.length === 1 ? "registro" : "registros"}
+                  {searchText !== "" && ` de ${clientes.length}`}
                 </span>
                 <span>
-                  {clientes.length > 0
-                    ? `Exibindo 1 – ${clientes.length}`
+                  {filteredClientes.length > 0
+                    ? `Exibindo 1 – ${filteredClientes.length}`
                     : "Nenhum registro"}
                 </span>
               </div>
