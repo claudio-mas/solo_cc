@@ -56,13 +56,14 @@ export function DataTable<TData>({
   }
 
   return (
-    <div className="overflow-auto rounded border border-neutral-300">
+    <div className="overflow-auto">
       <table className="w-full border-collapse text-sm">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr
               key={headerGroup.id}
-              className="border-b border-neutral-300 bg-neutral-700 text-white"
+              className="border-b border-neutral-800 text-white"
+              style={{ backgroundColor: "#1a1a1a" }}
             >
               {headerGroup.headers.map((header) => (
                 <th
@@ -106,14 +107,20 @@ export function DataTable<TData>({
                   onDoubleClick={() =>
                     onRowDoubleClick?.(row.original)
                   }
-                  className={[
-                    "cursor-pointer border-b border-neutral-200 transition-colors",
+                  style={
                     isSelected
-                      ? "bg-blue-100 font-medium"
+                      ? { backgroundColor: "#ffe8e8" }
+                      : undefined
+                  }
+                  className={[
+                    "cursor-pointer transition-colors",
+                    "border-b border-neutral-100",
+                    isSelected
+                      ? "font-medium"
                       : index % 2 === 0
                         ? "bg-white"
                         : "bg-neutral-50",
-                    "hover:bg-blue-50",
+                    "hover:bg-[#fff5f5]",
                   ].join(" ")}
                 >
                   {row.getVisibleCells().map((cell) => (

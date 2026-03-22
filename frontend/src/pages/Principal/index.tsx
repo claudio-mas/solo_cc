@@ -15,12 +15,9 @@
  *   RN18 — Botão "Usuários e Senhas" requer autenticação
  *   RN19 — Botão "Sair" encerra sessão e redireciona
  *   RN20 — Nome do usuário em maiúsculas na barra inferior
- *
- * TODO: substituir classes Tailwind placeholder pelo design system
- *       definitivo quando os tokens forem definidos.
  */
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createColumnHelper } from "@tanstack/react-table";
 
@@ -38,16 +35,144 @@ const columnHelper = createColumnHelper<ClienteListItem>();
 const columns = [
   columnHelper.accessor("codigo", {
     header: "Código",
-    size: 114,
+    size: 110,
     cell: (info) => (
-      <span className="block text-center">{info.getValue()}</span>
+      <span
+        className="font-mono font-medium"
+        style={{ color: "#8B0000" }}
+      >
+        {info.getValue()}
+      </span>
     ),
   }),
   columnHelper.accessor("cliente", {
     header: "Cliente",
     size: 548,
+    cell: (info) => (
+      <span className="font-semibold">{info.getValue()}</span>
+    ),
   }),
 ];
+
+// ---------------------------------------------------------------------------
+// Ícones inline SVG — sem dependência externa
+// ---------------------------------------------------------------------------
+
+/** Propriedades comuns a todos os ícones da sidebar */
+interface IconProps {
+  className?: string;
+}
+
+const ICON_PROPS = {
+  xmlns: "http://www.w3.org/2000/svg",
+  width: 18,
+  height: 18,
+  viewBox: "0 0 24 24",
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 2,
+  strokeLinecap: "round" as const,
+  strokeLinejoin: "round" as const,
+  "aria-hidden": true as const,
+};
+
+function SearchIcon() {
+  return (
+    <svg {...ICON_PROPS} width={16} height={16} className="shrink-0 text-neutral-400">
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+  );
+}
+
+function IconHome({ className }: IconProps) {
+  return (
+    <svg {...ICON_PROPS} className={className}>
+      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+      <polyline points="9 22 9 12 15 12 15 22" />
+    </svg>
+  );
+}
+
+function IconLancamentos({ className }: IconProps) {
+  return (
+    <svg {...ICON_PROPS} className={className}>
+      <line x1="12" y1="1" x2="12" y2="23" />
+      <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+    </svg>
+  );
+}
+
+function IconExtrato({ className }: IconProps) {
+  return (
+    <svg {...ICON_PROPS} className={className}>
+      <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
+      <rect x="9" y="3" width="6" height="4" rx="1" />
+      <line x1="9" y1="12" x2="15" y2="12" />
+      <line x1="9" y1="16" x2="13" y2="16" />
+    </svg>
+  );
+}
+
+function IconAlterar({ className }: IconProps) {
+  return (
+    <svg {...ICON_PROPS} className={className}>
+      <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+      <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+    </svg>
+  );
+}
+
+function IconNovoCliente({ className }: IconProps) {
+  return (
+    <svg {...ICON_PROPS} className={className}>
+      <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <line x1="19" y1="8" x2="19" y2="14" />
+      <line x1="22" y1="11" x2="16" y2="11" />
+    </svg>
+  );
+}
+
+function IconRelatorios({ className }: IconProps) {
+  return (
+    <svg {...ICON_PROPS} className={className}>
+      <line x1="18" y1="20" x2="18" y2="10" />
+      <line x1="12" y1="20" x2="12" y2="4" />
+      <line x1="6" y1="20" x2="6" y2="14" />
+    </svg>
+  );
+}
+
+function IconTotais({ className }: IconProps) {
+  return (
+    <svg {...ICON_PROPS} className={className}>
+      <line x1="4" y1="9" x2="20" y2="9" />
+      <line x1="4" y1="15" x2="20" y2="15" />
+      <line x1="10" y1="3" x2="8" y2="21" />
+      <line x1="16" y1="3" x2="14" y2="21" />
+    </svg>
+  );
+}
+
+function IconUsuarios({ className }: IconProps) {
+  return (
+    <svg {...ICON_PROPS} className={className}>
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+      <path d="M7 11V7a5 5 0 0110 0v4" />
+    </svg>
+  );
+}
+
+function IconSair({ className }: IconProps) {
+  return (
+    <svg {...ICON_PROPS} className={className}>
+      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+      <polyline points="16 17 21 12 16 7" />
+      <line x1="21" y1="12" x2="9" y2="12" />
+    </svg>
+  );
+}
 
 // ---------------------------------------------------------------------------
 // Componente
@@ -184,145 +309,261 @@ export default function Principal() {
     [],
   );
 
+  // Avatar: iniciais do nome do usuário (máx. 2 letras)
+  const initials = usuario
+    ? usuario
+        .split(" ")
+        .filter(Boolean)
+        .map((w) => w[0])
+        .slice(0, 2)
+        .join("")
+        .toUpperCase()
+    : "?";
+
+  // -------------------------------------------------------------------------
+  // Itens da sidebar agrupados por função
+  // -------------------------------------------------------------------------
+  const navInicio: SidebarItemProps[] = [
+    {
+      label: "Início",
+      onClick: () => {},
+      icon: <IconHome className="shrink-0" />,
+      active: true,
+    },
+  ];
+
+  const navClienteEspecifico: SidebarItemProps[] = [
+    {
+      label: "Lançamentos",
+      onClick: handleLancamentos,
+      icon: <IconLancamentos className="shrink-0" />,
+      disabled: !selectedCodigo,
+    },
+    {
+      label: "Conta Corrente",
+      onClick: handleExtrato,
+      icon: <IconExtrato className="shrink-0" />,
+      disabled: !selectedCodigo,
+    },
+    {
+      label: "Alterar",
+      onClick: handleAlterar,
+      icon: <IconAlterar className="shrink-0" />,
+      disabled: !selectedCodigo,
+    },
+  ];
+
+  const navGeral: SidebarItemProps[] = [
+    {
+      label: "Novo Cliente",
+      onClick: handleNovoCliente,
+      icon: <IconNovoCliente className="shrink-0" />,
+    },
+    {
+      label: "Relatórios",
+      onClick: handleRelatorios,
+      icon: <IconRelatorios className="shrink-0" />,
+    },
+    {
+      label: "Totais",
+      onClick: handleTotais,
+      icon: <IconTotais className="shrink-0" />,
+    },
+    {
+      label: "Usuários e Senhas",
+      onClick: handleUsuarios,
+      icon: <IconUsuarios className="shrink-0" />,
+    },
+  ];
+
   // -------------------------------------------------------------------------
   // Render
   // -------------------------------------------------------------------------
   return (
-    <div className="flex min-h-screen flex-col bg-white">
-      {/* Banner/logo — equivalente a C1PictureBox1 (B24 ADAPTAR) */}
-      <div className="flex items-center justify-center border-b border-neutral-200 bg-white py-3">
-        <img
-          src="/logo-banner.png"
-          alt="Solo Consultoria de Imóveis"
-          className="h-9 object-contain"
-          onError={(e) => {
-            (e.currentTarget as HTMLImageElement).style.display =
-              "none";
-          }}
-        />
-      </div>
-
-      {/* Toolbar — equivalente a C1Ribbon1 (B22 ADAPTAR) */}
-      <div className="flex flex-wrap items-center gap-1 border-b border-neutral-300 bg-neutral-100 px-4 py-2">
-        {/* Grupo 1: ações do cliente selecionado */}
-        <span className="mr-2 text-xs font-bold text-neutral-600">
-          {headerCodigo}
-        </span>
-        <ToolbarButton
-          label="Lançamentos"
-          onClick={handleLancamentos}
-          disabled={!selectedCodigo}
-        />
-        <ToolbarButton
-          label="Conta corrente"
-          onClick={handleExtrato}
-          disabled={!selectedCodigo}
-        />
-        <div className="mx-1 h-6 w-px bg-neutral-300" />
-        <ToolbarButton
-          label="Alterar"
-          onClick={handleAlterar}
-          disabled={!selectedCodigo}
-        />
-
-        {/* Separador entre grupos */}
-        <div className="mx-2 h-6 w-px bg-neutral-300" />
-
-        {/* Grupo 2: ações administrativas */}
-        <ToolbarButton
-          label="Novo Cliente"
-          onClick={handleNovoCliente}
-        />
-        <ToolbarButton
-          label="Relatórios"
-          onClick={handleRelatorios}
-        />
-        <ToolbarButton label="Totais" onClick={handleTotais} />
-        <ToolbarButton
-          label="Usuários e Senhas"
-          onClick={handleUsuarios}
-        />
-
-        {/* Grupo 3: sair */}
-        <div className="ml-auto">
-          <ToolbarButton label="Sair" onClick={handleSair} />
+    <div className="flex h-screen overflow-hidden">
+      {/* ------------------------------------------------------------------ */}
+      {/* Sidebar                                                             */}
+      {/* ------------------------------------------------------------------ */}
+      <aside
+        className="flex w-[220px] shrink-0 flex-col border-r border-neutral-200 bg-secondary"
+        aria-label="Navegação principal"
+      >
+        {/* Logo / marca na sidebar */}
+        <div
+          className="flex h-12 shrink-0 items-center border-b border-neutral-200 px-4"
+          style={{ backgroundColor: "#8B0000" }}
+        >
+          <span className="truncate text-sm font-bold tracking-wide text-white">
+            Contas Correntes
+          </span>
         </div>
-      </div>
 
-      {/* Área de pesquisa — equivalente a Label1 + txtPesq */}
-      <div className="flex items-center gap-2 px-4 py-3">
-        <label
-          htmlFor="pesquisa"
-          className="text-sm font-bold text-red-800"
-        >
-          Localizar cliente:
-        </label>
-        <input
-          id="pesquisa"
-          ref={searchInputRef}
-          type="text"
-          value={searchText}
-          onChange={(e) => handleSearch(e.target.value)}
-          className="rounded border border-neutral-300 px-2 py-1.5 text-sm outline-none transition-colors focus:border-blue-500"
-          autoComplete="off"
-        />
-      </div>
+        {/* Indicador do cliente selecionado (RN11) */}
+        <div className="border-b border-neutral-200 px-4 py-3">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
+            Cliente selecionado
+          </p>
+          <p
+            className="mt-0.5 font-mono text-sm font-bold"
+            style={{ color: "#8B0000" }}
+          >
+            {headerCodigo}
+          </p>
+        </div>
 
-      {/* Erro de carregamento */}
-      {error && (
-        <p
-          className="mx-4 mb-2 text-center text-xs text-red-600"
-          role="alert"
-        >
-          {error}
-        </p>
-      )}
+        {/* Grupo: ações do cliente */}
+        <nav className="flex-1 overflow-y-auto py-2">
+          {navInicio.map((item) => (
+            <SidebarItem key={item.label} {...item} />
+          ))}
 
-      {/* Grid de clientes — equivalente a RadGridView1 (B23 ADAPTAR) */}
-      <div className="flex-1 px-4 pb-2">
-        <DataTable
-          columns={columns}
-          data={clientes}
-          onRowClick={handleRowClick}
-          onRowDoubleClick={handleRowDoubleClick}
-          selectedRowId={selectedCliente?.id ?? null}
-          getRowId={getRowId}
-          isLoading={isLoading}
-        />
-      </div>
+          <div className="my-2 border-t border-neutral-200" />
 
-      {/* Barra inferior — equivalente a lblUsuario (RN20) */}
-      <div className="border-t border-neutral-300 bg-neutral-200 px-4 py-1">
-        <span className="text-xs text-neutral-700">
-          USUÁRIO: {usuario ?? ""}
-        </span>
+          <p className="px-4 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
+            Ações do cliente
+          </p>
+          {navClienteEspecifico.map((item) => (
+            <SidebarItem key={item.label} {...item} />
+          ))}
+
+          <div className="my-2 border-t border-neutral-200" />
+
+          <p className="px-4 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
+            Geral
+          </p>
+          {navGeral.map((item) => (
+            <SidebarItem key={item.label} {...item} />
+          ))}
+        </nav>
+
+        {/* Sair (fixo no rodapé da sidebar) */}
+        <div className="border-t border-neutral-200 py-2">
+          <SidebarItem
+            label="Sair"
+            onClick={handleSair}
+            icon={<IconSair className="shrink-0" />}
+          />
+        </div>
+      </aside>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* Área direita: topbar + conteúdo                                     */}
+      {/* ------------------------------------------------------------------ */}
+      <div className="flex flex-1 flex-col overflow-hidden">
+        {/* Topbar */}
+        <header className="flex h-12 shrink-0 items-center justify-between border-b border-neutral-200 bg-white px-5">
+          <span
+            className="text-sm font-bold"
+            style={{ color: "#8B0000" }}
+          >
+            Solo Consultoria de Imóveis
+          </span>
+
+          {/* Usuário + avatar (RN20) */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-neutral-600">
+              {usuario ?? ""}
+            </span>
+            <div
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
+              style={{ backgroundColor: "#8B0000" }}
+              aria-label={`Avatar de ${usuario ?? "usuário"}`}
+            >
+              {initials}
+            </div>
+          </div>
+        </header>
+
+        {/* Conteúdo principal */}
+        <main className="flex-1 overflow-auto bg-tertiary p-5">
+          {/* Card de pesquisa */}
+          <div className="mb-4 flex items-center gap-2 rounded-md border border-neutral-200 bg-white px-3 py-2 shadow-sm">
+            <SearchIcon />
+            <input
+              id="pesquisa"
+              ref={searchInputRef}
+              type="text"
+              value={searchText}
+              onChange={(e) => handleSearch(e.target.value)}
+              placeholder="Digite o nome ou código do cliente..."
+              className="flex-1 bg-transparent text-sm text-neutral-800 outline-none placeholder:text-neutral-400"
+              autoComplete="off"
+            />
+          </div>
+
+          {/* Erro de carregamento */}
+          {error && (
+            <p
+              className="mb-3 text-center text-xs text-red-600"
+              role="alert"
+            >
+              {error}
+            </p>
+          )}
+
+          {/* Tabela + rodapé */}
+          <div className="overflow-hidden rounded-md border border-neutral-200 bg-white shadow-sm">
+            <DataTable
+              columns={columns}
+              data={clientes}
+              onRowClick={handleRowClick}
+              onRowDoubleClick={handleRowDoubleClick}
+              selectedRowId={selectedCliente?.id ?? null}
+              getRowId={getRowId}
+              isLoading={isLoading}
+            />
+
+            {/* Rodapé da tabela: total de registros + paginação */}
+            {!isLoading && (
+              <div className="flex items-center justify-between border-t border-neutral-100 bg-white px-4 py-2 text-xs text-neutral-500">
+                <span>
+                  {clientes.length}{" "}
+                  {clientes.length === 1 ? "registro" : "registros"}
+                </span>
+                <span>
+                  {clientes.length > 0
+                    ? `Exibindo 1 – ${clientes.length}`
+                    : "Nenhum registro"}
+                </span>
+              </div>
+            )}
+          </div>
+        </main>
       </div>
     </div>
   );
 }
 
 // ---------------------------------------------------------------------------
-// Componente auxiliar: botão da toolbar
+// Componente auxiliar: item da sidebar
 // ---------------------------------------------------------------------------
 
-interface ToolbarButtonProps {
+interface SidebarItemProps {
   label: string;
   onClick: () => void;
+  icon: React.ReactNode;
   disabled?: boolean;
+  active?: boolean;
 }
 
-function ToolbarButton({
-  label,
-  onClick,
-  disabled,
-}: ToolbarButtonProps) {
+function SidebarItem({ label, onClick, icon, disabled, active }: SidebarItemProps) {
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="rounded px-3 py-1.5 text-xs font-medium text-neutral-700 transition-colors hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-50"
+      className={[
+        "flex w-full items-center gap-2.5 px-4 py-2 text-left text-sm transition-colors",
+        "border-l-2",
+        active
+          ? "border-[#8B0000] bg-white font-medium text-[#8B0000]"
+          : "border-transparent text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900",
+        disabled
+          ? "cursor-not-allowed opacity-40"
+          : "cursor-pointer",
+      ].join(" ")}
     >
+      {icon}
       {label}
     </button>
   );
