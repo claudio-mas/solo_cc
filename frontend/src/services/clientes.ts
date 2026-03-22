@@ -102,3 +102,109 @@ export async function criarCliente(
 
   return res.json();
 }
+
+// ---------------------------------------------------------------------------
+// frmAlterar — funções de edição e exclusão
+// ---------------------------------------------------------------------------
+
+export interface ClienteDetail {
+  id: number;
+  codigo: number;
+  cliente: string;
+  /** RN42 — indica se há lançamentos em Contas para o cliente */
+  tem_lancamentos: boolean;
+}
+
+export interface ClienteUpdateRequest {
+  codigo: number;
+  cliente: string;
+}
+
+export interface ClienteUpdateResponse {
+  id: number;
+  codigo: number;
+  cliente: string;
+}
+
+export interface VerificarSenhaResponse {
+  /** RN41 — True se senha confere com Chaves WHERE Ref='Exclusão de cliente' */
+  valido: boolean;
+  /** RN42 — True se cliente tem registros em Contas */
+  tem_lancamentos: boolean;
+}
+
+/**
+ * Busca dados de um cliente pelo Id.
+ * Equivalente ao frmAlterar_Load (Fill + Filter por Id).
+ * RN33, RN42.
+ */
+export async function fetchCliente(id: number): Promise<ClienteDetail> {
+  const res = await apiFetch(`/clientes/${id}`);
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.detail ?? "Falha ao carregar cliente");
+  }
+
+  return res.json();
+}
+
+/**
+ * Atualiza Código e/ou Nome do cliente.
+ * Equivalente a TableAdapterManager.UpdateAll() no btnRibSalvar_Click.
+ * RN36, RN37, RN47, RN48.
+ */
+export async function atualizarCliente(
+  id: number,
+  data: ClienteUpdateRequest,
+): Promise<ClienteUpdateResponse> {
+  const res = await apiFetch(`/clientes/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.detail ?? "Falha ao atualizar cliente");
+  }
+
+  return res.json();
+}
+
+/**
+ * Valida a senha de exclusão contra a tabela Chaves.
+ * Equivalente a frmSenha.ShowDialog() com varSenha="2".
+ * RN41, RN42.
+ */
+export async function verificarSenhaExclusao(
+  id: number,
+  senha: string,
+): Promise<VerificarSenhaResponse> {
+  const res = await apiFetch(`/clientes/${id}/verificar-senha`, {
+    method: "POST",
+    body: JSON.stringify({ senha }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.detail ?? "Falha ao verificar senha");
+  }
+
+  return res.json();
+}
+
+/**
+ * Exclui o cliente e seus lançamentos (se houver).
+ * Equivalente ao código ADODB comentado no btnExcluir_Click.
+ * RN44, RN45.
+ */
+export async function excluirCliente(id: number): Promise<void> {
+  const res = await apiFetch(`/clientes/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.detail ?? "Falha ao excluir cliente");
+  }
+}

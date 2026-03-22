@@ -19,7 +19,7 @@ Cobertura obrigatória (CLAUDE.md):
     10. Campos obrigatórios (422 — código e cliente)
 """
 
-from unittest.mock import MagicMock, call
+from unittest.mock import MagicMock
 
 from fastapi.testclient import TestClient
 from jose import jwt
@@ -205,9 +205,7 @@ class TestProximoCodigo:
         RN23 — Retorna primeiro gap >= 10000.
         RN27 — Retorna próximo Id (MAX(Id)+1).
         """
-        db = mock_db_proximo_codigo(
-            max_id=50, codigos=[10000, 10001, 10002]
-        )
+        db = mock_db_proximo_codigo(max_id=50, codigos=[10000, 10001, 10002])
 
         def _override():
             yield db
@@ -215,9 +213,7 @@ class TestProximoCodigo:
         app.dependency_overrides[get_db] = _override
         client = TestClient(app)
 
-        response = client.get(
-            "/clientes/proximo-codigo", headers=auth_header()
-        )
+        response = client.get("/clientes/proximo-codigo", headers=auth_header())
 
         assert response.status_code == 200
         data = response.json()
@@ -228,9 +224,7 @@ class TestProximoCodigo:
 
     def test_gap_no_meio_da_sequencia(self):
         """RN23 — Encontra gap no meio: 10000, 10002 → retorna 10001."""
-        db = mock_db_proximo_codigo(
-            max_id=10, codigos=[10000, 10002, 10003]
-        )
+        db = mock_db_proximo_codigo(max_id=10, codigos=[10000, 10002, 10003])
 
         def _override():
             yield db
@@ -238,9 +232,7 @@ class TestProximoCodigo:
         app.dependency_overrides[get_db] = _override
         client = TestClient(app)
 
-        response = client.get(
-            "/clientes/proximo-codigo", headers=auth_header()
-        )
+        response = client.get("/clientes/proximo-codigo", headers=auth_header())
 
         assert response.status_code == 200
         assert response.json()["proximo_codigo"] == 10001
@@ -257,9 +249,7 @@ class TestProximoCodigo:
         app.dependency_overrides[get_db] = _override
         client = TestClient(app)
 
-        response = client.get(
-            "/clientes/proximo-codigo", headers=auth_header()
-        )
+        response = client.get("/clientes/proximo-codigo", headers=auth_header())
 
         assert response.status_code == 200
         assert response.json()["proximo_codigo"] == 10000
@@ -409,3 +399,432 @@ class TestCriarCliente:
         assert response.status_code == 422
 
         app.dependency_overrides.clear()
+
+
+# ---------------------------------------------------------------------------
+# Testes — GET /clientes/{id}
+# ---------------------------------------------------------------------------
+
+
+class TestBuscarCliente:
+    """GET /clientes/{id} — RN33, RN42."""
+
+    def test_caminho_feliz_sem_lancamentos(self):
+        """
+        RN33 — Retorna dados do cliente pelo Id.
+        RN42 — tem_lancamentos=False quando Contas não tem registros.
+        """
+        db = MagicMock()
+
+        result_cliente = MagicMock()
+        result_cliente.fetchone.return_value = FakeRow(Id=1, Código=10001, Cliente="ANA SILVA")
+
+        result_total = MagicMock()
+        result_total.fetchone.return_value = FakeRow(total=0)
+
+        db.execute.side_effect = [result_cliente, result_total]
+
+        def _override():
+            yield db
+
+        app.dependency_overrides[get_db] = _override
+        client = TestClient(app)
+
+        response = client.get("/clientes/1", headers=auth_header())
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["id"] == 1
+        assert data["codigo"] == 10001
+        assert data["cliente"] == "ANA SILVA"
+        assert data["tem_lancamentos"] is False
+
+        app.dependency_overrides.clear()
+
+    def test_caminho_feliz_com_lancamentos(self):
+        """RN42 — tem_lancamentos=True quando Contas tem registros."""
+        db = MagicMock()
+
+        result_cliente = MagicMock()
+        result_cliente.fetchone.return_value = FakeRow(Id=2, Código=10002, Cliente="BRUNO COSTA")
+
+        result_total = MagicMock()
+        result_total.fetchone.return_value = FakeRow(total=5)
+
+        db.execute.side_effect = [result_cliente, result_total]
+
+        def _override():
+            yield db
+
+        app.dependency_overrides[get_db] = _override
+        client = TestClient(app)
+
+        response = client.get("/clientes/2", headers=auth_header())
+
+        assert response.status_code == 200
+        assert response.json()["tem_lancamentos"] is True
+
+        app.dependency_overrides.clear()
+
+    def test_nao_encontrado_retorna_404(self):
+        """RN33 — Cliente inexistente → 404."""
+        db = MagicMock()
+
+        result_cliente = MagicMock()
+        result_cliente.fetchone.return_value = None
+
+        db.execute.return_value = result_cliente
+
+        def _override():
+            yield db
+
+        app.dependency_overrides[get_db] = _override
+        client = TestClient(app)
+
+        response = client.get("/clientes/999", headers=auth_header())
+
+        assert response.status_code == 404
+
+        app.dependency_overrides.clear()
+
+    def test_autenticacao_negada_sem_token(self):
+        """Autenticação negada: requisição sem token → 401."""
+        client = TestClient(app)
+
+        response = client.get("/clientes/1")
+
+        assert response.status_code == 401
+
+
+# ---------------------------------------------------------------------------
+# Testes — PUT /clientes/{id}
+# ---------------------------------------------------------------------------
+
+
+class TestAtualizarCliente:
+    """PUT /clientes/{id} — RN36, RN37, RN47, RN48."""
+
+    def _mock_db_update(
+        self,
+        codigo_duplicado: bool = False,
+        cliente_existe: bool = True,
+        updated_row=None,
+    ):
+        """Mock para PUT /clientes/{id} — unicidade + exists + UPDATE."""
+        db = MagicMock()
+
+        # 1ª chamada: SELECT unicidade (RN48)
+        result_uniq = MagicMock()
+        result_uniq.fetchone.return_value = FakeRow(Id=99) if codigo_duplicado else None
+
+        # 2ª chamada: SELECT exists
+        result_exists = MagicMock()
+        result_exists.fetchone.return_value = FakeRow(Id=1) if cliente_existe else None
+
+        # 3ª chamada: UPDATE
+        result_update = MagicMock()
+        result_update.fetchone.return_value = updated_row
+
+        db.execute.side_effect = [
+            result_uniq,
+            result_exists,
+            result_update,
+        ]
+        return db
+
+    def test_alterar_codigo_retorna_200(self):
+        """
+        RN36/RN37 — Código ou nome alterado: backend salva sem lógica de
+        confirmação (confirmação é responsabilidade do frontend).
+        RN47 — Nome retornado em maiúsculas.
+        """
+        updated = FakeRow(Id=1, Código=10099, Cliente="ANA SILVA")
+        db = self._mock_db_update(updated_row=updated)
+
+        def _override():
+            yield db
+
+        app.dependency_overrides[get_db] = _override
+        client = TestClient(app)
+
+        response = client.put(
+            "/clientes/1",
+            json={"codigo": 10099, "cliente": "Ana Silva"},
+            headers=auth_header(),
+        )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["codigo"] == 10099
+        assert data["cliente"] == "ANA SILVA"
+
+        app.dependency_overrides.clear()
+
+    def test_alterar_nome_retorna_200(self):
+        """RN37 — Alterar só nome (mesmo código): backend salva normalmente."""
+        updated = FakeRow(Id=1, Código=10001, Cliente="ANA COSTA")
+        db = self._mock_db_update(updated_row=updated)
+
+        def _override():
+            yield db
+
+        app.dependency_overrides[get_db] = _override
+        client = TestClient(app)
+
+        response = client.put(
+            "/clientes/1",
+            json={"codigo": 10001, "cliente": "Ana Costa"},
+            headers=auth_header(),
+        )
+
+        assert response.status_code == 200
+        assert response.json()["cliente"] == "ANA COSTA"
+
+        app.dependency_overrides.clear()
+
+    def test_codigo_duplicado_retorna_409(self):
+        """RN48 — Código já usado por outro cliente → 409."""
+        db = self._mock_db_update(codigo_duplicado=True)
+
+        def _override():
+            yield db
+
+        app.dependency_overrides[get_db] = _override
+        client = TestClient(app)
+
+        response = client.put(
+            "/clientes/1",
+            json={"codigo": 10002, "cliente": "Teste"},
+            headers=auth_header(),
+        )
+
+        assert response.status_code == 409
+        assert "Código já existente" in response.json()["detail"]
+
+        app.dependency_overrides.clear()
+
+    def test_cliente_nao_encontrado_retorna_404(self):
+        """RN33 — Cliente inexistente → 404."""
+        db = self._mock_db_update(codigo_duplicado=False, cliente_existe=False)
+
+        def _override():
+            yield db
+
+        app.dependency_overrides[get_db] = _override
+        client = TestClient(app)
+
+        response = client.put(
+            "/clientes/999",
+            json={"codigo": 10001, "cliente": "Teste"},
+            headers=auth_header(),
+        )
+
+        assert response.status_code == 404
+
+        app.dependency_overrides.clear()
+
+    def test_autenticacao_negada_sem_token(self):
+        """Autenticação negada: requisição sem token → 401."""
+        client = TestClient(app)
+
+        response = client.put(
+            "/clientes/1",
+            json={"codigo": 10001, "cliente": "Teste"},
+        )
+
+        assert response.status_code == 401
+
+
+# ---------------------------------------------------------------------------
+# Testes — POST /clientes/{id}/verificar-senha
+# ---------------------------------------------------------------------------
+
+
+class TestVerificarSenha:
+    """POST /clientes/{id}/verificar-senha — RN41, RN42."""
+
+    def _mock_db_senha(
+        self,
+        chave: str = "4321",
+        total_lancamentos: int = 0,
+    ):
+        """Mock para /verificar-senha — SELECT Chaves + COUNT Contas."""
+        db = MagicMock()
+
+        result_chave = MagicMock()
+        result_chave.fetchone.return_value = FakeRow(Chave=chave)
+
+        result_total = MagicMock()
+        result_total.fetchone.return_value = FakeRow(total=total_lancamentos)
+
+        db.execute.side_effect = [result_chave, result_total]
+        return db
+
+    def test_senha_correta_sem_lancamentos(self):
+        """
+        RN41 — Senha correta → valido=True.
+        RN42 — Sem lançamentos → tem_lancamentos=False.
+        """
+        db = self._mock_db_senha(chave="4321", total_lancamentos=0)
+
+        def _override():
+            yield db
+
+        app.dependency_overrides[get_db] = _override
+        client = TestClient(app)
+
+        response = client.post(
+            "/clientes/1/verificar-senha",
+            json={"senha": "4321"},
+            headers=auth_header(),
+        )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["valido"] is True
+        assert data["tem_lancamentos"] is False
+
+        app.dependency_overrides.clear()
+
+    def test_senha_correta_com_lancamentos(self):
+        """RN42 — Com lançamentos → tem_lancamentos=True."""
+        db = self._mock_db_senha(chave="4321", total_lancamentos=3)
+
+        def _override():
+            yield db
+
+        app.dependency_overrides[get_db] = _override
+        client = TestClient(app)
+
+        response = client.post(
+            "/clientes/1/verificar-senha",
+            json={"senha": "4321"},
+            headers=auth_header(),
+        )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["valido"] is True
+        assert data["tem_lancamentos"] is True
+
+        app.dependency_overrides.clear()
+
+    def test_senha_incorreta_retorna_valido_false(self):
+        """RN41 — Senha errada → valido=False (não lança exceção)."""
+        db = self._mock_db_senha(chave="4321", total_lancamentos=0)
+
+        def _override():
+            yield db
+
+        app.dependency_overrides[get_db] = _override
+        client = TestClient(app)
+
+        response = client.post(
+            "/clientes/1/verificar-senha",
+            json={"senha": "ERRADA"},
+            headers=auth_header(),
+        )
+
+        assert response.status_code == 200
+        assert response.json()["valido"] is False
+
+        app.dependency_overrides.clear()
+
+    def test_autenticacao_negada_sem_token(self):
+        """Autenticação negada: requisição sem token → 401."""
+        client = TestClient(app)
+
+        response = client.post(
+            "/clientes/1/verificar-senha",
+            json={"senha": "4321"},
+        )
+
+        assert response.status_code == 401
+
+
+# ---------------------------------------------------------------------------
+# Testes — DELETE /clientes/{id}
+# ---------------------------------------------------------------------------
+
+
+class TestExcluirCliente:
+    """DELETE /clientes/{id} — RN43, RN44, RN45."""
+
+    def _mock_db_delete(self, cliente_existe: bool = True):
+        """Mock para DELETE — SELECT exists + DELETE Contas + DELETE Clientes."""
+        db = MagicMock()
+
+        result_exists = MagicMock()
+        result_exists.fetchone.return_value = FakeRow(Id=1) if cliente_existe else None
+
+        db.execute.side_effect = [
+            result_exists,
+            MagicMock(),  # DELETE Contas
+            MagicMock(),  # DELETE Clientes
+        ]
+        return db
+
+    def test_excluir_sem_lancamentos_retorna_204(self):
+        """
+        RN45 — Exclusão sem lançamentos: DELETE Clientes apenas.
+        Backend sempre executa DELETE Contas + Clientes em sequência.
+        """
+        db = self._mock_db_delete(cliente_existe=True)
+
+        def _override():
+            yield db
+
+        app.dependency_overrides[get_db] = _override
+        client = TestClient(app)
+
+        response = client.delete("/clientes/1", headers=auth_header())
+
+        assert response.status_code == 204
+        # Verifica que DELETE foi chamado (Contas + Clientes)
+        assert db.execute.call_count == 3
+        assert db.commit.called
+
+        app.dependency_overrides.clear()
+
+    def test_excluir_com_lancamentos_retorna_204(self):
+        """
+        RN44 — Exclusão com lançamentos: DELETE Contas + DELETE Clientes.
+        O frontend já confirmou a exclusão dos lançamentos antes de chamar.
+        """
+        db = self._mock_db_delete(cliente_existe=True)
+
+        def _override():
+            yield db
+
+        app.dependency_overrides[get_db] = _override
+        client = TestClient(app)
+
+        response = client.delete("/clientes/1", headers=auth_header())
+
+        assert response.status_code == 204
+
+        app.dependency_overrides.clear()
+
+    def test_cliente_nao_encontrado_retorna_404(self):
+        """RN33 — Cliente inexistente → 404."""
+        db = self._mock_db_delete(cliente_existe=False)
+
+        def _override():
+            yield db
+
+        app.dependency_overrides[get_db] = _override
+        client = TestClient(app)
+
+        response = client.delete("/clientes/999", headers=auth_header())
+
+        assert response.status_code == 404
+
+        app.dependency_overrides.clear()
+
+    def test_autenticacao_negada_sem_token(self):
+        """Autenticação negada: requisição sem token → 401."""
+        client = TestClient(app)
+
+        response = client.delete("/clientes/1")
+
+        assert response.status_code == 401

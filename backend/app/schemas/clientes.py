@@ -38,7 +38,8 @@ class ProximoCodigoResponse(BaseModel):
 class ClienteCreate(BaseModel):
     """Request body para POST /clientes. RN21, RN22, RN24, RN26."""
 
-    codigo: int = Field(ge=10000, le=20000)  # RN22 — código entre 10000 e 20000
+    # RN22 — código entre 10000 e 20000
+    codigo: int = Field(ge=10000, le=20000)
     cliente: str = Field(min_length=1)  # RN24 — nome obrigatório
 
 
@@ -48,3 +49,49 @@ class ClienteCreateResponse(BaseModel):
     id: int
     codigo: int
     cliente: str
+
+
+# ---------------------------------------------------------------------------
+# frmAlterar — schemas para busca, atualização e exclusão de cliente
+# ---------------------------------------------------------------------------
+
+
+class ClienteDetail(BaseModel):
+    """Response do endpoint GET /clientes/{id}. RN33, RN42."""
+
+    id: int
+    codigo: int
+    cliente: str
+    # RN42 — indica se há lançamentos em Contas para o cliente
+    tem_lancamentos: bool
+
+
+class ClienteUpdate(BaseModel):
+    """Request body para PUT /clientes/{id}. RN36, RN37, RN47, RN48."""
+
+    codigo: int = Field(ge=1)  # RN48 — unicidade validada no service
+    # RN47 — convertido para maiúsculas no service
+    cliente: str = Field(min_length=1)
+
+
+class ClienteUpdateResponse(BaseModel):
+    """Response do endpoint PUT /clientes/{id}."""
+
+    id: int
+    codigo: int
+    cliente: str
+
+
+class VerificarSenhaRequest(BaseModel):
+    """Request body para POST /clientes/{id}/verificar-senha. RN41."""
+
+    senha: str = Field(min_length=1)
+
+
+class VerificarSenhaResponse(BaseModel):
+    """Response do endpoint POST /clientes/{id}/verificar-senha. RN41, RN42."""
+
+    # RN41 — True se senha confere com Chaves WHERE Ref='Exclusão de cliente'
+    valido: bool
+    # RN42 — True se cliente tem registros em Contas
+    tem_lancamentos: bool

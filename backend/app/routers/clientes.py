@@ -1,6 +1,7 @@
 """
 Endpoints FastAPI — Clientes
-Equivalente a: FrmPrincipal.vb e frmClienteNovo.vb (Solo Consultoria de Imóveis)
+Equivalente a: FrmPrincipal.vb, frmClienteNovo.vb e frmAlterar.vb
+(Solo Consultoria de Imóveis)
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -10,10 +11,23 @@ from app.dependencies import get_current_user, get_db
 from app.schemas.clientes import (
     ClienteCreate,
     ClienteCreateResponse,
+    ClienteDetail,
     ClientesResponse,
+    ClienteUpdate,
+    ClienteUpdateResponse,
     ProximoCodigoResponse,
+    VerificarSenhaRequest,
+    VerificarSenhaResponse,
 )
-from app.services.clientes import criar_cliente, listar_clientes, proximo_codigo
+from app.services.clientes import (
+    atualizar_cliente,
+    buscar_cliente,
+    criar_cliente,
+    excluir_cliente,
+    listar_clientes,
+    proximo_codigo,
+    verificar_senha_exclusao,
+)
 
 router = APIRouter(prefix="/clientes", tags=["Clientes"])
 
@@ -99,3 +113,105 @@ async def post_cliente(
     RN30 — Código > 20.000: retorna 422.
     """
     return criar_cliente(db, codigo=body.codigo, cliente=body.cliente)
+
+
+# ---------------------------------------------------------------------------
+# frmAlterar — endpoints de edição e exclusão
+# ---------------------------------------------------------------------------
+
+
+@router.get(
+    "/{id}",
+    response_model=ClienteDetail,
+    summary="Busca cliente por Id",
+    description=(
+        "Retorna dados de um cliente específico e indica se possui "
+        "lançamentos em Contas. Equivalente ao frmAlterar_Load "
+        "(Fill + Filter por Id)."
+    ),
+)
+async def get_cliente(
+    id: int,
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user),
+):
+    """
+    RN33 — Carrega dados do cliente pelo Id.
+    RN42 — Verifica existência de lançamentos (tem_lancamentos).
+    """
+    return buscar_cliente(db, id)
+
+
+@router.put(
+    "/{id}",
+    response_model=ClienteUpdateResponse,
+    summary="Atualiza cliente",
+    description=(
+        "Atualiza Código e/ou Nome do cliente. Validações: código "
+        "único (excluindo o próprio Id), nome em maiúsculas. "
+        "Equivalente a TableAdapterManager.UpdateAll() no "
+        "btnRibSalvar_Click do frmAlterar."
+    ),
+)
+async def put_cliente(
+    id: int,
+    body: ClienteUpdate,
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user),
+):
+    """
+    RN36 — Alteração de Código (confirmação de alto risco no frontend).
+    RN37 — Alteração de Nome (confirmação simples no frontend).
+    RN38 — Após salvar, frontend retorna campos a ReadOnly.
+    RN47 — Nome convertido para maiúsculas.
+    RN48 — Código deve ser único excluindo o próprio Id.
+    """
+    return atualizar_cliente(db, id=id, codigo=body.codigo, cliente=body.cliente)
+
+
+@router.post(
+    "/{id}/verificar-senha",
+    response_model=VerificarSenhaResponse,
+    summary="Verifica senha de exclusão",
+    description=(
+        "Valida a senha fornecida contra a tabela Chaves "
+        "(Ref='Exclusão de cliente'). Retorna também se o cliente "
+        "possui lançamentos, para o frontend decidir se exibe "
+        "confirmação adicional. Equivalente a frmSenha (varSenha=2)."
+    ),
+)
+async def post_verificar_senha(
+    id: int,
+    body: VerificarSenhaRequest,
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user),
+):
+    """
+    RN41 — Senha validada contra Chaves WHERE Ref='Exclusão de cliente'.
+    RN42 — Retorna tem_lancamentos para controle de fluxo no frontend.
+    """
+    return verificar_senha_exclusao(db, id=id, senha=body.senha)
+
+
+@router.delete(
+    "/{id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Exclui cliente",
+    description=(
+        "Exclui o cliente e todos os seus lançamentos em Contas "
+        "(se houver), em transação. Equivalente ao código ADODB "
+        "comentado no btnExcluir_Click do frmAlterar."
+    ),
+)
+async def delete_cliente(
+    id: int,
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user),
+):
+    """
+    RN43 — Confirmação adicional (se tem lançamentos) validada no frontend.
+    RN44 — DELETE Contas + DELETE Clientes em transação.
+    RN45 — DELETE Clientes apenas se sem lançamentos.
+    RN46 — Frontend invalida cache e navega para /principal após sucesso.
+    """
+    excluir_cliente(db, id=id)

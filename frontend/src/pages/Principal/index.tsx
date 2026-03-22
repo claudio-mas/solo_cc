@@ -293,7 +293,7 @@ export default function Principal() {
   }
 
   function handleAlterar() {
-    if (selectedCodigo) navigate(`/clientes/${selectedCodigo}/editar`);
+    if (selectedCliente) navigate(`/clientes/alterar/${selectedCliente.id}`);
   }
 
   function handleNovoCliente() {
