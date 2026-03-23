@@ -9,6 +9,7 @@ import Login from "@/pages/Login";
 import Principal from "@/pages/Principal";
 import ClienteNovo from "@/pages/ClienteNovo";
 import Alterar from "@/pages/Alterar";
+import Lanca from "@/pages/Lanca";
 import { useAuthStore } from "@/store/authStore";
 
 const queryClient = new QueryClient();
@@ -45,6 +46,14 @@ createRoot(document.getElementById("root")!).render(
             element={
               <PrivateRoute>
                 <Alterar />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/lancamentos"
+            element={
+              <PrivateRoute>
+                <Lanca />
               </PrivateRoute>
             }
           />

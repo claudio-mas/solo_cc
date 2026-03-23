@@ -279,10 +279,17 @@ export default function Principal() {
   }
 
   // RN16 — Lançamentos
-  // TODO: B08 pendente — investigar RadGridView1.Tag quando demais forms
-  //       legados estiverem disponíveis. Por ora, usa caminho padrão.
+  // RN50 — passa dados do cliente selecionado via route state
   function handleLancamentos() {
-    navigate("/lancamentos");
+    if (selectedCliente) {
+      navigate("/lancamentos", {
+        state: {
+          id: selectedCliente.id,
+          codigo: selectedCliente.codigo,
+          cliente: selectedCliente.cliente,
+        },
+      });
+    }
   }
 
   // RN18 — Usuários e Senhas
