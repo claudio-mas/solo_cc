@@ -256,7 +256,13 @@ export default function Principal() {
   // RN15 — Double-click abre extrato do cliente selecionado
   // -------------------------------------------------------------------------
   function handleRowDoubleClick(row: ClienteListItem) {
-    navigate(`/extrato/${row.codigo}`);
+    navigate("/extrato", {
+      state: {
+        idCliente: row.id,
+        codCliente: row.codigo,
+        nomeCliente: row.cliente,
+      },
+    });
   }
 
   // -------------------------------------------------------------------------
@@ -275,7 +281,15 @@ export default function Principal() {
 
   // RN17 — Conta corrente
   function handleExtrato() {
-    if (selectedCodigo) navigate(`/extrato/${selectedCodigo}`);
+    if (selectedCliente) {
+      navigate("/extrato", {
+        state: {
+          idCliente: selectedCliente.id,
+          codCliente: selectedCliente.codigo,
+          nomeCliente: selectedCliente.cliente,
+        },
+      });
+    }
   }
 
   // RN16 — Lançamentos
