@@ -1,0 +1,422 @@
+/* Usuarios.module.css — estilos da tela de gestão de usuários */
+
+/* ---- Layout ---- */
+
+.container {
+  display: flex;
+  min-height: 100vh;
+  align-items: flex-start;
+  justify-content: center;
+  background-color: #f5f5f5;
+  padding: 2rem 1rem;
+}
+
+.card {
+  width: 100%;
+  max-width: 820px;
+  border-radius: 8px;
+  background-color: #fff;
+  padding: 2rem 2.5rem 2.5rem;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 12%);
+}
+
+/* ---- Título ---- */
+
+.titulo {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+  color: #1a1a1a;
+  margin: 0 0 2rem;
+  letter-spacing: 0.03em;
+}
+
+/* ---- Seções ---- */
+
+.secao {
+  margin-bottom: 2.5rem;
+}
+
+.secaoTitulo {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #555;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 0.5rem;
+  margin: 0 0 1rem;
+}
+
+/* ---- Tabela ---- */
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.9375rem;
+}
+
+.tabela th {
+  text-align: left;
+  font-weight: 600;
+  color: #444;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 2px solid #ddd;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.tabela td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #eee;
+  color: #1a1a1a;
+  vertical-align: middle;
+}
+
+.tabela tr:last-child td {
+  border-bottom: none;
+}
+
+.tabela tr:hover td {
+  background-color: #f9f9f9;
+}
+
+/* ---- Inputs inline ---- */
+
+.inputInline {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  padding: 0.3125rem 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  color: #1a1a1a;
+  background-color: #fff;
+  outline: none;
+}
+
+.inputInline:focus {
+  border-color: #0033aa;
+  box-shadow: 0 0 0 2px rgb(0 51 170 / 20%);
+}
+
+.inputInline:disabled {
+  background-color: #f5f5f5;
+  color: #888;
+  cursor: not-allowed;
+}
+
+/* Input de senha — mascara o texto */
+.inputSenha {
+  composes: inputInline;
+  font-family: monospace;
+  letter-spacing: 0.15em;
+}
+
+/* ---- Select inline ---- */
+
+.selectInline {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  padding: 0.3125rem 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: #1a1a1a;
+  background-color: #fff;
+  outline: none;
+  width: 100%;
+}
+
+.selectInline:focus {
+  border-color: #0033aa;
+  box-shadow: 0 0 0 2px rgb(0 51 170 / 20%);
+}
+
+.selectInline:disabled {
+  background-color: #f5f5f5;
+  color: #888;
+  cursor: not-allowed;
+}
+
+/* ---- Botões de ação por linha ---- */
+
+.acoes {
+  display: flex;
+  gap: 0.375rem;
+  white-space: nowrap;
+}
+
+.btnSalvar {
+  padding: 0.3125rem 0.75rem;
+  background-color: #0033aa;
+  border: none;
+  border-radius: 4px;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.btnSalvar:hover {
+  background-color: #002288;
+}
+
+.btnSalvar:focus {
+  outline: 2px solid #0033aa;
+  outline-offset: 2px;
+}
+
+.btnCancelar {
+  padding: 0.3125rem 0.75rem;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #444;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.btnCancelar:hover {
+  background-color: #e0e0e0;
+}
+
+/* ---- Botão Adicionar usuário ---- */
+
+.btnAdicionar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #f0f4ff;
+  border: 1px solid #c7d7fa;
+  border-radius: 4px;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #0033aa;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.btnAdicionar:hover {
+  background-color: #e0ecff;
+}
+
+/* ---- Formulário de adição ---- */
+
+.formAdicionar {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.formLabel {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #555;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* ---- Botão Voltar ---- */
+
+.btnVoltar {
+  display: block;
+  width: 100%;
+  padding: 0.625rem 1rem;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #444;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  margin-top: 1rem;
+}
+
+.btnVoltar:hover {
+  background-color: #e0e0e0;
+}
+
+.btnVoltar:focus {
+  outline: 2px solid #0033aa;
+  outline-offset: 2px;
+}
+
+.btnVoltar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---- Estados de loading e erro ---- */
+
+.loading {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  color: #666;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.erro {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  color: #cc0000;
+  background-color: #fff0f0;
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.erroInline {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.8125rem;
+  color: #cc0000;
+  margin-top: 0.25rem;
+}
+
+/* ---- Modal de senha ---- */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgb(0 0 0 / 50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modalCard {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 20%);
+}
+
+.modalTitulo {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.5rem;
+}
+
+.modalDescricao {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.875rem;
+  color: #666;
+  margin: 0 0 1.25rem;
+}
+
+.modalLabel {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #444;
+  display: block;
+  margin-bottom: 0.375rem;
+}
+
+.modalInput {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  color: #1a1a1a;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.modalInput:focus {
+  border-color: #0033aa;
+  box-shadow: 0 0 0 2px rgb(0 51 170 / 20%);
+}
+
+.modalBotoes {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.modalBtnConfirmar {
+  flex: 1;
+  padding: 0.5625rem 1rem;
+  background-color: #0033aa;
+  border: none;
+  border-radius: 4px;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.modalBtnConfirmar:hover {
+  background-color: #002288;
+}
+
+.modalBtnConfirmar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.modalBtnCancelar {
+  flex: 1;
+  padding: 0.5625rem 1rem;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #444;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.modalBtnCancelar:hover {
+  background-color: #e0e0e0;
+}
+
+.modalErro {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.875rem;
+  color: #cc0000;
+  background-color: #fff0f0;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  margin-top: 0.75rem;
+}
+
+/* ---- Célula readonly (Ref) ---- */
+
+.cellReadonly {
+  color: #555;
+  font-style: italic;
+}

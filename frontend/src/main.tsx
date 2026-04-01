@@ -9,8 +9,10 @@ import Login from "@/pages/Login";
 import Principal from "@/pages/Principal";
 import ClienteNovo from "@/pages/ClienteNovo";
 import Alterar from "@/pages/Alterar";
+import Extrato from "@/pages/Extrato";
 import Lanca from "@/pages/Lanca";
 import Totais from "@/pages/Totais";
+import Usuarios from "@/pages/Usuarios";
 import { useAuthStore } from "@/store/authStore";
 
 const queryClient = new QueryClient();
@@ -51,6 +53,14 @@ createRoot(document.getElementById("root")!).render(
             }
           />
           <Route
+            path="/extrato"
+            element={
+              <PrivateRoute>
+                <Extrato />
+              </PrivateRoute>
+            }
+          />
+          <Route
             path="/lancamentos"
             element={
               <PrivateRoute>
@@ -63,6 +73,14 @@ createRoot(document.getElementById("root")!).render(
             element={
               <PrivateRoute>
                 <Totais />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/usuarios"
+            element={
+              <PrivateRoute>
+                <Usuarios />
               </PrivateRoute>
             }
           />

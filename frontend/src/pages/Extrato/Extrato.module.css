@@ -1,0 +1,578 @@
+/* Extrato.module.css — estilos da tela de extrato */
+
+/* ---- Layout ---- */
+
+.container {
+  display: flex;
+  min-height: 100vh;
+  align-items: flex-start;
+  justify-content: center;
+  background-color: #f5f5f5;
+  padding: 1rem;
+}
+
+.card {
+  width: 100%;
+  max-width: 1100px;
+  border-radius: 8px;
+  background-color: #fff;
+  padding: 1.5rem 2rem 2rem;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 12%);
+}
+
+/* ---- Header do cliente ---- */
+
+.headerCliente {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 1.125rem;
+  font-weight: 700;
+  text-align: center;
+  color: #8b0000;
+  margin: 0 0 1rem;
+  letter-spacing: 0.02em;
+}
+
+/* ---- Barra de filtros ---- */
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+}
+
+.filtroLabel {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #8b0000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.filtroInput {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.875rem;
+  padding: 0.375rem 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: #8b0000;
+  background-color: #fff;
+  outline: none;
+  width: 120px;
+}
+
+.filtroInput:focus {
+  border-color: #0033aa;
+  box-shadow: 0 0 0 2px rgb(0 51 170 / 20%);
+}
+
+.filtroCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #8b0000;
+  padding-bottom: 0.25rem;
+}
+
+.filtroCheckbox input[type="checkbox"] {
+  accent-color: #8b0000;
+}
+
+.btnFiltrar {
+  padding: 0.375rem 1rem;
+  background-color: #0033aa;
+  border: none;
+  border-radius: 4px;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.btnFiltrar:hover {
+  background-color: #002288;
+}
+
+/* ---- Tabela ---- */
+
+.tabelaWrapper {
+  overflow-x: auto;
+  margin-bottom: 0.5rem;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.875rem;
+}
+
+.tabela th {
+  text-align: left;
+  font-weight: 600;
+  color: #444;
+  padding: 0.4375rem 0.5rem;
+  border-bottom: 2px solid #ddd;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.tabela td {
+  padding: 0.375rem 0.5rem;
+  border-bottom: 1px solid #eee;
+  color: #1a1a1a;
+  vertical-align: middle;
+}
+
+.tabela tr:hover td {
+  background-color: #f9f9f9;
+}
+
+.tabela .colData { width: 90px; text-align: center; }
+.tabela .colPasta { width: 60px; text-align: center; }
+.tabela .colND { width: 80px; text-align: center; }
+.tabela .colHistorico { min-width: 200px; }
+.tabela .colValor { width: 100px; text-align: right; }
+.tabela .colSaldo { width: 100px; text-align: right; }
+
+.rowSelected td {
+  background-color: #e8f0fe;
+}
+
+.rowSaldoPositivo td:last-child {
+  color: #cc0000;
+}
+
+.rowSaldoNegativo td:last-child {
+  color: #0033aa;
+}
+
+.historicoDest {
+  color: #cc0000;
+  font-weight: 600;
+}
+
+/* ---- Inputs inline ---- */
+
+.inputInline {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.875rem;
+  padding: 0.25rem 0.375rem;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  width: 100%;
+  color: #1a1a1a;
+  background-color: #fff;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.inputInline:focus {
+  border-color: #0033aa;
+  box-shadow: 0 0 0 2px rgb(0 51 170 / 20%);
+}
+
+.inputReadonly {
+  composes: inputInline;
+  background-color: transparent;
+  border-color: transparent;
+  cursor: default;
+}
+
+.inputReadonly:focus {
+  border-color: transparent;
+  box-shadow: none;
+}
+
+/* ---- Rodapé com saldo ---- */
+
+.rodape {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.saldoLabel {
+  font-family: "Segoe UI Semibold", "Segoe UI", system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.saldoCredor {
+  composes: saldoLabel;
+  color: #cc0000;
+}
+
+.saldoDevedor {
+  composes: saldoLabel;
+  color: #0033aa;
+}
+
+/* ---- Barra de ações ---- */
+
+.acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.btnAcao {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.4375rem 0.875rem;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #444;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.btnAcao:hover {
+  background-color: #e0e0e0;
+}
+
+.btnAcao:focus {
+  outline: 2px solid #0033aa;
+  outline-offset: 2px;
+}
+
+.btnAcao:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btnAcaoAtivo {
+  composes: btnAcao;
+  background-color: #0033aa;
+  border-color: #0033aa;
+  color: #fff;
+}
+
+.btnAcaoAtivo:hover {
+  background-color: #002288;
+}
+
+.btnVoltar {
+  display: block;
+  width: 100%;
+  padding: 0.625rem 1rem;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #444;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  margin-top: 0.5rem;
+}
+
+.btnVoltar:hover {
+  background-color: #e0e0e0;
+}
+
+/* ---- Painel de transferência ---- */
+
+.painelTransferencia {
+  padding: 1rem;
+  background-color: #fff8f0;
+  border: 1px solid #e8d4b8;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.painelTransferenciaTitulo {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #8b4513;
+  margin: 0 0 0.75rem;
+}
+
+.painelTransferenciaForm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+}
+
+.painelTransferenciaLabel {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #555;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+  min-width: 200px;
+}
+
+.selectCliente {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.875rem;
+  padding: 0.375rem 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: #1a1a1a;
+  background-color: #fff;
+  outline: none;
+  width: 100%;
+}
+
+.selectCliente:focus {
+  border-color: #0033aa;
+  box-shadow: 0 0 0 2px rgb(0 51 170 / 20%);
+}
+
+.inputSenha {
+  font-family: monospace;
+  font-size: 0.875rem;
+  padding: 0.375rem 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: #1a1a1a;
+  background-color: #fff;
+  outline: none;
+  width: 160px;
+  letter-spacing: 0.15em;
+}
+
+.inputSenha:focus {
+  border-color: #0033aa;
+  box-shadow: 0 0 0 2px rgb(0 51 170 / 20%);
+}
+
+.btnTransferir {
+  padding: 0.375rem 1rem;
+  background-color: #8b4513;
+  border: none;
+  border-radius: 4px;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.btnTransferir:hover {
+  background-color: #6b3410;
+}
+
+.btnTransferir:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---- Modal de senha (desbloqueio) ---- */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgb(0 0 0 / 50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modalCard {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 20%);
+}
+
+.modalTitulo {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.5rem;
+}
+
+.modalDescricao {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.875rem;
+  color: #666;
+  margin: 0 0 1.25rem;
+}
+
+.modalLabel {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #444;
+  display: block;
+  margin-bottom: 0.375rem;
+}
+
+.modalInput {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  color: #1a1a1a;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.modalInput:focus {
+  border-color: #0033aa;
+  box-shadow: 0 0 0 2px rgb(0 51 170 / 20%);
+}
+
+.modalBotoes {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.modalBtnConfirmar {
+  flex: 1;
+  padding: 0.5625rem 1rem;
+  background-color: #0033aa;
+  border: none;
+  border-radius: 4px;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.modalBtnConfirmar:hover {
+  background-color: #002288;
+}
+
+.modalBtnConfirmar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.modalBtnCancelar {
+  flex: 1;
+  padding: 0.5625rem 1rem;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #444;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.modalBtnCancelar:hover {
+  background-color: #e0e0e0;
+}
+
+.modalErro {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.875rem;
+  color: #cc0000;
+  background-color: #fff0f0;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  margin-top: 0.75rem;
+}
+
+/* ---- Estados ---- */
+
+.loading {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  color: #666;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.erro {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  color: #cc0000;
+  background-color: #fff0f0;
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.sucesso {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.875rem;
+  color: #006600;
+  background-color: #f0fff0;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+/* ---- Tooltip ---- */
+
+.tooltipWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltipWrapper:hover .tooltipText {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tooltipText {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 0.375rem 0.625rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+  margin-bottom: 4px;
+  z-index: 10;
+}
+
+/* ---- Checkbox seleção de linha ---- */
+
+.checkboxSel {
+  accent-color: #0033aa;
+  cursor: pointer;
+}

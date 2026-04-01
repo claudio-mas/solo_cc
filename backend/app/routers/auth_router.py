@@ -18,6 +18,11 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.dependencies import get_current_user, get_db  # noqa: F401
+from app.schemas.usuarios import (
+    VerificarSenhaRequest,
+    VerificarSenhaResponse,
+)
+from app.services.usuarios import verificar_senha_operacao
 
 router = APIRouter(prefix="/auth", tags=["Autenticação"])
 
@@ -190,3 +195,31 @@ async def login(payload: LoginRequest, db: Session = Depends(get_db)):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Erro interno: {str(e)}"
         )
+
+
+@router.post(
+    "/verificar-senha",
+    response_model=VerificarSenhaResponse,
+    summary="Verifica senha de operação crítica",
+    description=(
+        "Valida a senha fornecida contra a tabela Chaves pelo campo Ref. "
+        "RN68 — equivalente ao frmSenha.vb (varSenha='1'): antes de abrir "
+        "a tela de usuários, o frontend chama este endpoint com "
+        "ref='Alteração de senhas'. Também usado para outras operações "
+        "críticas (transferência, desbloqueio). "
+        "Requer autenticação JWT."
+    ),
+)
+async def verificar_senha(
+    payload: VerificarSenhaRequest,
+    db: Session = Depends(get_db),
+    _user: dict = Depends(get_current_user),
+):
+    """
+    RN68 — valida senha de operação crítica via tabela Chaves.
+    Suporta senhas em texto plano (legado) e bcrypt.
+    Retorna {ok: true} se válida; {ok: false} se inválida.
+    Nunca revela qual campo está errado (apenas ok: false).
+    """
+    ok = verificar_senha_operacao(db, ref=payload.ref, chave=payload.chave)
+    return VerificarSenhaResponse(ok=ok)
