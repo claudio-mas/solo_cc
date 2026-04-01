@@ -15,6 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routers.auth_router import router as auth_router
 from app.routers.clientes import router as clientes_router
 from app.routers.lancamentos import router as lancamentos_router
+from app.routers.totais import router as totais_router
 
 app = FastAPI(
     title="Solo CC API",
@@ -39,3 +40,4 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(clientes_router)
 app.include_router(lancamentos_router)
+app.include_router(totais_router)

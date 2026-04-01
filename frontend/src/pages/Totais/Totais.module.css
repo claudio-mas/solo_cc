@@ -1,0 +1,191 @@
+/* Totais.module.css — estilos da tela de totais de clientes */
+
+/* ---- Layout ---- */
+
+.container {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+}
+
+.card {
+  width: 100%;
+  max-width: 640px;
+  border-radius: 8px;
+  background-color: #fff;
+  padding: 2rem 2.5rem 2.5rem;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 12%);
+}
+
+/* ---- Título ---- */
+
+.titulo {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+  color: #1a1a1a;
+  margin: 0 0 1.5rem;
+  letter-spacing: 0.03em;
+}
+
+/* ---- Date picker ---- */
+
+.datepickerRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+}
+
+.labelData {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #444;
+  white-space: nowrap;
+}
+
+.inputData {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  padding: 0.375rem 0.625rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: #1a1a1a;
+  outline: none;
+}
+
+.inputData:focus {
+  border-color: #0033aa;
+  box-shadow: 0 0 0 2px rgb(0 51 170 / 20%);
+}
+
+/* ---- Grid de cards 2×2 ---- */
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* ---- Card de métrica ---- */
+
+.metricCard {
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  border: 1px solid transparent;
+}
+
+/* B07 — credores: azul (SystemColors.HotTrack) */
+.credores {
+  background-color: #eff4ff;
+  border-color: #c7d7fa;
+  color: #0033aa;
+}
+
+/* B07 — devedores: vermelho */
+.devedores {
+  background-color: #fff0f0;
+  border-color: #fac7c7;
+  color: #cc0000;
+}
+
+.metricIcone {
+  margin-bottom: 0.25rem;
+  opacity: 0.75;
+}
+
+.metricLabel {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+}
+
+.metricValorQtde {
+  font-family: "Segoe UI Semibold", "Segoe UI", system-ui, sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.metricValorMoeda {
+  font-family: "Segoe UI Semibold", "Segoe UI", system-ui, sans-serif;
+  font-size: 1.375rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.metricSubLabel {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.75rem;
+  opacity: 0.65;
+}
+
+/* ---- Nota informacional — B08 ---- */
+
+.nota {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.8125rem;
+  color: #666;
+  text-align: center;
+  margin: 0 0 1.5rem;
+}
+
+/* ---- Estado de loading ---- */
+
+.loading {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  color: #666;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+/* ---- Erro ---- */
+
+.erro {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  color: #cc0000;
+  text-align: center;
+  padding: 1rem 0;
+  background-color: #fff0f0;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+/* ---- Botão Voltar — B13 ---- */
+
+.btnVoltar {
+  display: block;
+  width: 100%;
+  padding: 0.625rem 1rem;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #444;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.btnVoltar:hover {
+  background-color: #e0e0e0;
+}
+
+.btnVoltar:focus {
+  outline: 2px solid #0033aa;
+  outline-offset: 2px;
+}

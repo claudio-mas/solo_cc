@@ -10,6 +10,7 @@ import Principal from "@/pages/Principal";
 import ClienteNovo from "@/pages/ClienteNovo";
 import Alterar from "@/pages/Alterar";
 import Lanca from "@/pages/Lanca";
+import Totais from "@/pages/Totais";
 import { useAuthStore } from "@/store/authStore";
 
 const queryClient = new QueryClient();
@@ -54,6 +55,14 @@ createRoot(document.getElementById("root")!).render(
             element={
               <PrivateRoute>
                 <Lanca />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/totais"
+            element={
+              <PrivateRoute>
+                <Totais />
               </PrivateRoute>
             }
           />

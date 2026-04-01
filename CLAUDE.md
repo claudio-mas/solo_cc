@@ -258,6 +258,7 @@ Ao criar ou modificar uma tela, referenciar sempre o form de origem:
 | `/clientes/novo` | `frmClienteNovo` | `docs/frmClienteNovo_documentacao.md` |
 | `/clientes/alterar` | `frmAlterar` | `docs/frmAlterar_documentacao.md` |
 | `/lancamentos` | `FrmLancaData` + `FrmLanca` | `docs/FrmLanca_documentacao.md` |
+| `/totais` | `frmTotais2` | `docs/frmTotais2_documentacao.md` |
 
 ---
 
