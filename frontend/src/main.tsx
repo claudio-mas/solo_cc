@@ -10,9 +10,13 @@ import Principal from "@/pages/Principal";
 import ClienteNovo from "@/pages/ClienteNovo";
 import Alterar from "@/pages/Alterar";
 import Extrato from "@/pages/Extrato";
+import ExtratoImprimir from "@/pages/Extrato/Imprimir";
 import Lanca from "@/pages/Lanca";
 import Totais from "@/pages/Totais";
 import Usuarios from "@/pages/Usuarios";
+import Relatorios from "@/pages/Relatorios";
+import Devedores from "@/pages/Relatorios/Devedores";
+import Credores from "@/pages/Relatorios/Credores";
 import { useAuthStore } from "@/store/authStore";
 
 const queryClient = new QueryClient();
@@ -61,6 +65,14 @@ createRoot(document.getElementById("root")!).render(
             }
           />
           <Route
+            path="/extrato/imprimir"
+            element={
+              <PrivateRoute>
+                <ExtratoImprimir />
+              </PrivateRoute>
+            }
+          />
+          <Route
             path="/lancamentos"
             element={
               <PrivateRoute>
@@ -81,6 +93,30 @@ createRoot(document.getElementById("root")!).render(
             element={
               <PrivateRoute>
                 <Usuarios />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/relatorios"
+            element={
+              <PrivateRoute>
+                <Relatorios />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/relatorios/devedores"
+            element={
+              <PrivateRoute>
+                <Devedores />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/relatorios/credores"
+            element={
+              <PrivateRoute>
+                <Credores />
               </PrivateRoute>
             }
           />

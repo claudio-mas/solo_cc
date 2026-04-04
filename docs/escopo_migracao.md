@@ -378,7 +378,7 @@ conforme o contexto.
 
 | # | Decisão                              | Impacto                                    |
 |---|--------------------------------------|--------------------------------------------|
-| D1 | Estratégia de geração de relatórios/PDF | Bloqueia forms 10–13                    |
+| D1 | ~~Estratégia de geração de relatórios/PDF~~ **✅ RESOLVIDO (2026-04-04): @react-pdf/renderer.** Gera PDF real com texto selecionável, suporte nativo a tabelas, sem dependência do DOM. Descartadas: `react-to-pdf` e `jsPDF+html2canvas` (geram imagem, não PDF de texto). | Bloqueia forms 10–13 — **desbloqueado** |
 | D2 | Backup de banco na interface web     | Afeta FrmPrincipal (botão Backup)          |
 | D3 | Senha de exclusão "4321" hardcoded   | Afeta frmAlterar / frmSenha case "2"       |
 | D4 | Comportamento Enter no campo Histórico do FrmLanca | Afeta FrmLanca UX          |

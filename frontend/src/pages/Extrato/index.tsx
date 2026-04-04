@@ -25,7 +25,7 @@
  *   RN97  — UPDATE IdCliente + CodCliente
  *   RN98  — Recarregar após transferência
  *   RN99  — Sincronizar VValor ao desmontar
- *   RN100 — Impressão pendente (D1)
+ *   RN100 — Impressão do extrato filtrado (D1 resolvido: @react-pdf/renderer)
  *   RN101 — Navegação primeiro/último
  *
  * B45/B46/B47/B48/B49/B50/B51/B52/B53/B54 — DESCARTAR (artefatos WinForms)
@@ -541,14 +541,29 @@ export default function Extrato() {
 
         {/* Barra de ações */}
         <div className={styles.acoes}>
-          <div className={styles.tooltipWrapper}>
-            <button className={styles.btnAcao} disabled title="Disponível após definição da estratégia de relatórios">
-              <IconePrinter /> Imprimir
-            </button>
-            <span className={styles.tooltipText}>
-              Disponível após definição da estratégia de relatórios (D1)
-            </span>
-          </div>
+          {/* RN100 — D1 resolvido: navega para /extrato/imprimir com filtros ativos (B81–B85) */}
+          <button
+            className={styles.btnAcao}
+            onClick={() =>
+              navigate("/extrato/imprimir", {
+                state: {
+                  extratoImprimir: {
+                    idCliente,
+                    codCliente,
+                    nomeCliente,
+                    filtros: {
+                      pasta: filtroPasta.trim() ? Number(filtroPasta) : undefined,
+                      nd: filtroND.trim() && !filtroSemND ? filtroND.trim() : undefined,
+                      sem_nd: filtroSemND || undefined,
+                      hist: filtroHist.trim() || undefined,
+                    },
+                  },
+                },
+              })
+            }
+          >
+            <IconePrinter /> Imprimir
+          </button>
           <button
             className={showTransferencia ? styles.btnAcaoAtivo : styles.btnAcao}
             onClick={toggleTransferencia}

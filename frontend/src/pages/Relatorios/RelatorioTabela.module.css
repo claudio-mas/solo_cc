@@ -1,0 +1,166 @@
+.container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.titulo {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1f2937;
+  text-align: center;
+  margin-bottom: 0.75rem;
+}
+
+.infoFaixa {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 1rem;
+}
+
+.loading {
+  text-align: center;
+  color: #6b7280;
+  padding: 2rem;
+}
+
+.erro {
+  text-align: center;
+  color: #dc2626;
+  padding: 2rem;
+}
+
+.vazio {
+  text-align: center;
+  color: #6b7280;
+  padding: 2rem;
+  font-style: italic;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.tabela thead tr {
+  background: #f3f4f6;
+}
+
+.tabela thead th {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #374151;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.tabela tbody tr:nth-child(even) {
+  background: #f9fafb;
+}
+
+.tabela tbody tr:hover {
+  background: #eff6ff;
+}
+
+.tabela td {
+  padding: 0.4375rem 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+  color: #1f2937;
+}
+
+.thCod,
+.tdCod {
+  width: 90px;
+}
+
+.thSaldo,
+.tdSaldo {
+  width: 130px;
+  text-align: right;
+}
+
+.thNome,
+.tdNome {
+  /* flex restante */
+}
+
+/* RN113 — saldo devedor em vermelho */
+.saldoDevedor {
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+/* RN119 — saldo credor em azul */
+.saldoCreedor {
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+/* RN123 — saldo extrato: >= 0 vermelho, < 0 azul */
+.saldoPositivo {
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+.saldoNegativo {
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+.rodapeSaldo {
+  text-align: right;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-top: 0.75rem;
+  padding: 0.375rem 0.75rem;
+}
+
+.acoes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+}
+
+.btnVoltar {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 1rem;
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+
+.btnVoltar:hover {
+  background: #e5e7eb;
+}
+
+.btnPDF {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 1.25rem;
+  background: #15803d;
+  color: #fff;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btnPDF:hover:not(:disabled) {
+  background: #166534;
+}
+
+.btnPDF:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

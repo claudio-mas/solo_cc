@@ -16,6 +16,7 @@ from app.routers.auth_router import router as auth_router
 from app.routers.clientes import router as clientes_router
 from app.routers.extrato import router as extrato_router
 from app.routers.lancamentos import router as lancamentos_router
+from app.routers.relatorios import router as relatorios_router
 from app.routers.totais import router as totais_router
 from app.routers.usuarios import router as usuarios_router
 
@@ -43,5 +44,6 @@ app.include_router(auth_router)
 app.include_router(clientes_router)
 app.include_router(extrato_router)
 app.include_router(lancamentos_router)
+app.include_router(relatorios_router)
 app.include_router(totais_router)
 app.include_router(usuarios_router)

@@ -260,7 +260,11 @@ Ao criar ou modificar uma tela, referenciar sempre o form de origem:
 | `/lancamentos` | `FrmLancaData` + `FrmLanca` | `docs/FrmLanca_documentacao.md` |
 | `/totais` | `frmTotais2` | `docs/frmTotais2_documentacao.md` |
 | `/extrato` | `FrmExtrato` | `docs/FrmExtrato_documentacao.md` |
+| `/extrato/imprimir` | `FrmExtratoRpt` | `docs/FrmExtratoRpt_documentacao.md` |
 | `/usuarios` | `FrmUsuarios` | `docs/FrmUsuarios_documentacao.md` |
+| `/relatorios` | `frmReports` | `docs/frmReports_documentacao.md` |
+| `/relatorios/devedores` | `frmRptDevedores1` | `docs/frmRptDevedores1_documentacao.md` |
+| `/relatorios/credores` | `frmCredores1` | `docs/frmCredores1_documentacao.md` |
 
 ---
 
