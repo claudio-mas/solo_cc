@@ -297,6 +297,20 @@
   background-color: #e0e0e0;
 }
 
+.rodapeAcoes {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.rodapeAcoes .btnAcao {
+  white-space: nowrap;
+}
+
+.rodapeAcoes .btnVoltar {
+  margin-top: 0;
+}
+
 /* ---- Painel de transferência ---- */
 
 .painelTransferencia {

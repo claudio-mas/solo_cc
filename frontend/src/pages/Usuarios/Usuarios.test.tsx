@@ -20,7 +20,6 @@ import {
   render,
   screen,
   waitFor,
-  within,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
@@ -216,8 +215,8 @@ describe("Usuarios", () => {
     await user.click(screen.getByRole("button", { name: "Confirmar" }));
 
     await waitFor(() => {
-      expect(screen.getByText("Admin")).toBeTruthy();
-      expect(screen.getByText("Joao")).toBeTruthy();
+      expect(screen.getByLabelText("Login de Admin")).toBeTruthy();
+      expect(screen.getByLabelText("Login de Joao")).toBeTruthy();
     });
 
     // RN72 — seção Chaves visível para Admin
@@ -255,7 +254,7 @@ describe("Usuarios", () => {
     await user.click(screen.getByRole("button", { name: "Confirmar" }));
 
     await waitFor(() => {
-      expect(screen.getByText("Joao")).toBeTruthy();
+      expect(screen.getByLabelText("Login de Joao")).toBeTruthy();
     });
 
     // RN72 — sem seção Chaves
@@ -279,7 +278,7 @@ describe("Usuarios", () => {
     await user.click(screen.getByRole("button", { name: "Confirmar" }));
 
     await waitFor(() => {
-      expect(screen.getByText("Joao")).toBeTruthy();
+      expect(screen.getByLabelText("Login de Joao")).toBeTruthy();
     });
 
     const selectPerfil = screen.getByLabelText("Perfil de Joao");
@@ -302,7 +301,7 @@ describe("Usuarios", () => {
     await user.click(screen.getByRole("button", { name: "Confirmar" }));
 
     await waitFor(() => {
-      expect(screen.getByText("Admin")).toBeTruthy();
+      expect(screen.getByLabelText("Login de Admin")).toBeTruthy();
     });
 
     // Antes da edição — sem botões Salvar (para usuários)
@@ -332,7 +331,7 @@ describe("Usuarios", () => {
     await user.click(screen.getByRole("button", { name: "Confirmar" }));
 
     await waitFor(() => {
-      expect(screen.getByText("Admin")).toBeTruthy();
+      expect(screen.getByLabelText("Login de Admin")).toBeTruthy();
     });
 
     // Edita o campo de senha
@@ -367,7 +366,7 @@ describe("Usuarios", () => {
     await user.click(screen.getByRole("button", { name: "Confirmar" }));
 
     await waitFor(() => {
-      expect(screen.getByText("Joao")).toBeTruthy();
+      expect(screen.getByLabelText("Login de Joao")).toBeTruthy();
     });
 
     expect(screen.queryByText("Adicionar usuário")).toBeNull();
@@ -419,7 +418,7 @@ describe("Usuarios", () => {
     await user.click(screen.getByRole("button", { name: "Confirmar" }));
 
     await waitFor(() => {
-      expect(screen.getByText("Admin")).toBeTruthy();
+      expect(screen.getByLabelText("Login de Admin")).toBeTruthy();
     });
 
     await user.type(screen.getByLabelText("Nova senha de Admin"), "novasenha");

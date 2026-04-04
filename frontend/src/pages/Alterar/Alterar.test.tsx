@@ -11,8 +11,8 @@
  *   7. Exclusão com lançamentos (modal adicional → sucesso)
  */
 
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
@@ -89,6 +89,10 @@ function renderComponent(clienteId = "1") {
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(fetchCliente).mockResolvedValue(CLIENTE_SEM_LANCAMENTOS);
+});
+
+afterEach(() => {
+  cleanup();
 });
 
 // ---------------------------------------------------------------------------

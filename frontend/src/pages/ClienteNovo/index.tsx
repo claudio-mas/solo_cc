@@ -236,15 +236,16 @@ export default function ClienteNovo() {
                   errors.codigo ?? codigoBlurError ? styles.inputError : "",
                 ].join(" ")}
               />
-              {/* RN26 — mensagem de campo obrigatório */}
-              {errors.codigo && (
-                <span className={styles.errorText}>
-                  {errors.codigo.message}
-                </span>
-              )}
-              {/* RN29/RN30 — erros de validação onBlur */}
-              {codigoBlurError && !errors.codigo && (
+              {/* RN29/RN30 — erros de validação onBlur têm prioridade */}
+              {codigoBlurError ? (
                 <span className={styles.errorText}>{codigoBlurError}</span>
+              ) : (
+                // RN26 — mensagem de campo obrigatório
+                errors.codigo && (
+                  <span className={styles.errorText}>
+                    {errors.codigo.message}
+                  </span>
+                )
               )}
             </div>
             {/* Botão "Gerar código" — RN23 */}

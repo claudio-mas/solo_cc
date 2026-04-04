@@ -106,7 +106,9 @@ describe("Principal", () => {
     renderPrincipal();
     const user = userEvent.setup();
 
-    const searchInput = screen.getByLabelText("Localizar cliente:");
+    const searchInput = screen.getByPlaceholderText(
+      "Digite o nome ou código do cliente...",
+    );
     await user.type(searchInput, "Bru");
 
     // Após digitar "Bru", o header deve mostrar o código do Bruno (202)
@@ -130,7 +132,9 @@ describe("Principal", () => {
   it("campo de pesquisa recebe foco automaticamente (RN14)", async () => {
     renderPrincipal();
 
-    const searchInput = screen.getByLabelText("Localizar cliente:");
+    const searchInput = screen.getByPlaceholderText(
+      "Digite o nome ou código do cliente...",
+    );
     await waitFor(() => {
       expect(document.activeElement).toBe(searchInput);
     });
@@ -154,13 +158,21 @@ describe("Principal", () => {
     const cells = screen.getAllByText("Bruno Costa");
     fireEvent.doubleClick(cells[0]!);
 
-    expect(mockNavigate).toHaveBeenCalledWith("/extrato/202");
+    expect(mockNavigate).toHaveBeenCalledWith(
+      "/extrato",
+      expect.objectContaining({
+        state: expect.objectContaining({
+          codCliente: 202,
+          nomeCliente: "Bruno Costa",
+        }),
+      }),
+    );
   });
 
   it("barra inferior exibe nome do usuário em maiúsculas (RN20)", () => {
     renderPrincipal();
 
-    const footerElements = screen.getAllByText(/USUÁRIO: ADMIN/);
+    const footerElements = screen.getAllByText("ADMIN");
     expect(footerElements.length).toBeGreaterThanOrEqual(1);
     expect(footerElements[0]).toBeInTheDocument();
   });

@@ -53,7 +53,16 @@ import styles from "./Extrato.module.css";
 
 function formatarValor(v: number | null): string {
   if (v === null || v === undefined) return "";
-  return v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return new Intl.NumberFormat("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(v);
+}
+
+function parseValorBR(valor: string): number {
+  const normalizado = valor.replace(/\./g, "").replace(",", ".").trim();
+  const numero = Number(normalizado);
+  return Number.isFinite(numero) ? numero : 0;
 }
 
 function formatarData(dt: string): string {
@@ -177,8 +186,9 @@ function ModalSenha({ onConfirmar, onCancelar }: ModalSenhaProps) {
         <p className={styles.modalDescricao}>
           Informe a senha para desbloquear a edição dos lançamentos.
         </p>
-        <label className={styles.modalLabel}>Senha</label>
+        <label htmlFor="senha-desbloqueio" className={styles.modalLabel}>Senha</label>
         <input
+          id="senha-desbloqueio"
           ref={inputRef}
           type="password"
           className={styles.modalInput}
@@ -361,15 +371,22 @@ export default function Extrato() {
     valor: string,
     valorOriginal: string,
   ) => {
-    if (valor === valorOriginal) return;
+    const valorAtual = valor.trim();
+    const valorAnterior = valorOriginal.trim();
+
+    if (campo === "deb" || campo === "cred") {
+      if (parseValorBR(valorAtual) === parseValorBR(valorAnterior)) return;
+    } else if (valorAtual === valorAnterior) {
+      return;
+    }
 
     const payload: Record<string, string | number> = {};
-    if (campo === "dt") payload.dt = valor;
-    else if (campo === "conta") payload.conta = Number(valor);
-    else if (campo === "nd") payload.nd = valor;
-    else if (campo === "ref") payload.ref = valor;
-    else if (campo === "deb") payload.deb = Number(valor);
-    else if (campo === "cred") payload.cred = Number(valor);
+    if (campo === "dt") payload.dt = valorAtual;
+    else if (campo === "conta") payload.conta = Number(valorAtual);
+    else if (campo === "nd") payload.nd = valorAtual;
+    else if (campo === "ref") payload.ref = valorAtual;
+    else if (campo === "deb") payload.deb = parseValorBR(valorAtual);
+    else if (campo === "cred") payload.cred = parseValorBR(valorAtual);
 
     try {
       await atualizarLancamento(idLanc, payload);
@@ -545,9 +562,6 @@ export default function Extrato() {
             {desbloqueado ? <IconeUnlock /> : <IconeLock />}
             {desbloqueado ? "Bloquear (F10)" : "Desbloquear (F10)"}
           </button>
-          <button className={styles.btnAcao} onClick={scrollToPrimeiro}>
-            <IconeUp /> Primeiro
-          </button>
           <button className={styles.btnAcao} onClick={scrollToUltimo}>
             <IconeDown /> Último
           </button>
@@ -711,15 +725,15 @@ export default function Extrato() {
                         {desbloqueado ? (
                           <input
                             className={styles.inputInline}
-                            type="number"
-                            step="0.01"
-                            defaultValue={l.deb ?? ""}
+                            type="text"
+                            inputMode="decimal"
+                            defaultValue={l.deb != null ? formatarValor(l.deb) : ""}
                             onBlur={(e) =>
                               handleCellBlur(
                                 l.id,
                                 "deb",
                                 e.target.value,
-                                l.deb != null ? String(l.deb) : "",
+                                l.deb != null ? formatarValor(l.deb) : "",
                               )
                             }
                             style={{ width: 90, textAlign: "right" }}
@@ -733,15 +747,15 @@ export default function Extrato() {
                         {desbloqueado ? (
                           <input
                             className={styles.inputInline}
-                            type="number"
-                            step="0.01"
-                            defaultValue={l.cred ?? ""}
+                            type="text"
+                            inputMode="decimal"
+                            defaultValue={l.cred != null ? formatarValor(l.cred) : ""}
                             onBlur={(e) =>
                               handleCellBlur(
                                 l.id,
                                 "cred",
                                 e.target.value,
-                                l.cred != null ? String(l.cred) : "",
+                                l.cred != null ? formatarValor(l.cred) : "",
                               )
                             }
                             style={{ width: 90, textAlign: "right" }}
@@ -780,10 +794,15 @@ export default function Extrato() {
           </span>
         </div>
 
-        {/* Botão Voltar */}
-        <button className={styles.btnVoltar} onClick={() => navigate("/principal")}>
-          Retornar
-        </button>
+        {/* Ações de rodapé */}
+        <div className={styles.rodapeAcoes}>
+          <button className={styles.btnAcao} onClick={scrollToPrimeiro}>
+            <IconeUp /> Primeiro
+          </button>
+          <button className={styles.btnVoltar} onClick={() => navigate("/principal")}>
+            Retornar
+          </button>
+        </div>
       </div>
 
       {/* Modal de senha para desbloqueio */}

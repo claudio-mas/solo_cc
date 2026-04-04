@@ -267,8 +267,9 @@ describe("Extrato", () => {
     const tableCheckboxes = checkboxes.filter(
       (cb) => cb.closest("td") !== null
     );
-    if (tableCheckboxes.length > 0) {
-      await user.click(tableCheckboxes[0]);
+    const primeiroCheckboxTabela = tableCheckboxes[0];
+    if (primeiroCheckboxTabela !== undefined) {
+      await user.click(primeiroCheckboxTabela);
     }
 
     // Seleciona cliente destino
